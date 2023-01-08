@@ -34,7 +34,6 @@ const permission = {
           }
           return false
         })
-        console.log(accessedRouters)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

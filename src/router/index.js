@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import routes from '@/routes'
 import store from '@/store'
+import configs from '@/configs'
+import authorization from '@/utils/authorization'
 
 Vue.use(VueRouter)
 
@@ -14,6 +16,8 @@ VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch((err) => err)
 }
 
+
+
 const router = new VueRouter({
   mode: 'history',
   routes,
@@ -21,36 +25,33 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (store.state.login.token) { // 如果存有token
-    // 进入登录页后直接跳转至系统内
+  const token = authorization.getToken()
+
+  // 已登录
+  if (token) {
+    debugger
     if (to.path === '/login') {
       next({
-        path: '/'
+        path: '/',
+        replace: true
       })
     } else {
-      // 否则
-      if (!store.state.login.roles.length) {
-        store.dispatch('login/getUserInfo').then((res) => {
-          const roles = res.roles
-          store
-            .dispatch('permission/generateRoutes', { roles })
-            .then(() => {
-              store.state.permission.addRouters.forEach((route) => {
-                router.addRoute(route)
-              })
-
-              next({ ...to, replace: true })
-            })
-            .catch((err) => {
-              console.log(err)
-            })
-        })
-      } else {
-        next()
-      }
+      // 反之优先获取用户信息，再进行跳转 
+      // 获取用户信息...
+      next()
     }
-  } else {
-    next('/login')
   }
+  // 未登录
+  else {
+    debugger
+    if (configs.whiteList.includes(to.path)) {
+      next()
+    } 
+    // 反之重定向到登录页面
+    else {
+      next('/login')
+    }
+  }
+
 })
 export default router

@@ -7,20 +7,36 @@
       </a-layout-sider>
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0">
-          <a-icon
-            class="trigger"
-            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="() => (collapsed = !collapsed)"
-          />
+          <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+            @click="() => (collapsed = !collapsed)" />
           <breadcrumbs />
+          <div class="header-right">
+            <div class="content">
+              <span class="username">a Ridiculous Boy</span>
+              <a-dropdown>
+                <a-avatar :src="kenan" :size="40" style="cursor:pointer" />
+                <a-menu slot="overlay">
+                  <a-menu-item key="3">
+                    帮助中心
+                  </a-menu-item>
+                  <a-menu-divider />
+                  <a-menu-item key="0">
+                    <a href="http://www.alipay.com/">个人设置</a>
+                  </a-menu-item>
+                  <a-menu-item key="1">
+                    <a href="http://www.taobao.com/">退出登录</a>
+                  </a-menu-item>
+                  <a-menu-divider />
+                </a-menu>
+              </a-dropdown>
+            </div>
+          </div>
         </a-layout-header>
-        <a-layout-content
-          :style="{
-            margin: '24px 16px',
-            padding: '24px',
-            minHeight: '280px'
-          }"
-        >
+        <a-layout-content :style="{
+          margin: '24px 16px',
+          padding: '24px',
+          minHeight: '280px'
+        }">
           <router-view></router-view>
         </a-layout-content>
       </a-layout>
@@ -31,7 +47,8 @@
 <script>
 import Sidebar from './sidebar.vue'
 import Breadcrumbs from './breadcrumbs.vue'
-
+import { mapState } from 'vuex'
+import kenan from '@assets/images/kenan.jpg'
 
 export default {
   name: 'Layout',
@@ -47,13 +64,19 @@ export default {
   },
   data() {
     return {
-      collapsed: false
+      collapsed: false,
+      kenan
     }
   },
   methods: {
     navigateToHome() {
       this.$router.push('/')
     }
+  },
+  computed: {
+    ...mapState({
+      username: (state) => state.user.username
+    })
   }
 }
 </script>
@@ -85,6 +108,7 @@ export default {
 
 .ant-layout-header {
   display: flex;
+
   align-items: center;
 }
 
@@ -92,5 +116,20 @@ export default {
 /deep/.ant-layout-content {
   padding: 0 !important;
   margin: 0 !important;
+}
+
+.header-right {
+  flex: 1;
+  margin: 0 32px;
+
+  .username {
+    margin: 0 12px;
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>

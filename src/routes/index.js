@@ -3,6 +3,9 @@ const Layout = () => import('@/layout/index.vue')
 const Workspace = () => import('@views/dashboard/workspace')
 const Analysis = () => import('@views/dashboard/analysis')
 
+// 登录组件
+const Login = () => import('@/views/login')
+
 // 异常页组件
 const UnAuthorization = () => import('@views/exception/403')
 const NotFound = () => import('@/views/exception/404')
@@ -36,46 +39,6 @@ const All = () => import('@views/permission/all')
 const RouteView = {
   render: (h) => h('router-view')
 }
-
-export const constantRouterMap = [
-  {
-    path: '/',
-    redirect: '/dashboard'
-  },
-  {
-    name: 'Dashboard',
-    path: '/dashboard',
-    redirect: '/dashboard/workspace',
-    component: Layout,
-    meta: {
-      title: '仪表盘',
-      hasSubMenu: true,
-      icon: 'dashboard'
-    },
-    children: [
-      {
-        name: 'Workspace',
-        path: '/dashboard/workspace',
-        component: Workspace,
-        meta: {
-          title: '工作台',
-          icon: 'smile',
-          hasSubMenu: false
-        }
-      },
-      {
-        name: 'Analysis',
-        path: '/dashboard/analysis',
-        component: Analysis,
-        meta: {
-          title: '分析页',
-          icon: 'pie-chart',
-          hasSubMenu: false
-        }
-      }
-    ]
-  }
-]
 
 export const asyncRouterMap = [
   {
@@ -317,5 +280,52 @@ export const asyncRouterMap = [
     redirect: '/exception/404'
   }
 ]
+export const constantRouterMap = [
+  {
+    name: 'Login',
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/',
+    redirect: '/dashboard'
+  },
+  {
+    name: 'Dashboard',
+    path: '/dashboard',
+    redirect: '/dashboard/workspace',
+    component: Layout,
+    meta: {
+      title: '仪表盘',
+      hasSubMenu: true,
+      icon: 'dashboard'
+    },
+    children: [
+      {
+        name: 'Workspace',
+        path: '/dashboard/workspace',
+        component: Workspace,
+        meta: {
+          title: '工作台',
+          icon: 'smile',
+          hasSubMenu: false
+        }
+      },
+      {
+        name: 'Analysis',
+        path: '/dashboard/analysis',
+        component: Analysis,
+        meta: {
+          title: '分析页',
+          icon: 'pie-chart',
+          hasSubMenu: false
+        }
+      }
+    ]
+  },
+  ...asyncRouterMap
+]
+
+
 
 export default constantRouterMap

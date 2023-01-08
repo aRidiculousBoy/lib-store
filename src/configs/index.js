@@ -6,16 +6,20 @@ export const networkTimeout = 5000
 
 
 const apiPaths = {
-  development: 'https://ridiculous.usemock.com',
+  development: '/api',
   test: 'https://www.bootcdn.com',
-  production: 'https://facelook.com'
+  production: '/api'
 }
 
 export const baseURL = apiPaths[appMode]
+
+// 白名单列表
+export const whiteList = ['/login']
 
 export default {
   appMode,
   apiPaths,
   baseURL,
-  networkTimeout
+  networkTimeout,
+  whiteList
 }

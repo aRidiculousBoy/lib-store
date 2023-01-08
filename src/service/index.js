@@ -1,7 +1,71 @@
 import axios from 'axios'
-import { getToken } from '@/utils/authorization'
-import { notification } from 'ant-design-vue'
+import authorization from '@/utils/authorization'
+import config from '@/configs'
+import { notification as Notice, message as Message } from 'ant-design-vue'
 import { baseURL, networkTimeout } from '@/configs'
+import router from '@/router'
+
+const showMessage = options => {
+  // 开发环境提示详细信息，方便排查问题
+  if (config.appMode === "development") {
+    Notice.error({
+      message: options.title,
+      description: h => {
+        let content = [];
+
+        // Method
+        if (options.method) {
+          let method = h("div", { style: "color: #8c8c8c;" }, [
+            h("span", { style: "margin-right: 5px; color: #262626;" }, "[Method]:"),
+            options.method.toUpperCase()
+          ]);
+
+          content.push(method);
+        }
+
+        // Status
+        if (options.status) {
+          let status = h("div", { style: "color: #8c8c8c;" }, [
+            h("span", { style: "margin-right: 5px; color: #262626;" }, "[Status]:"),
+            options.status
+          ]);
+
+          content.push(status);
+        }
+
+        // Url
+        if (options.url) {
+          let url = h("div", { style: "color: #8c8c8c;" }, [
+            h("span", { style: "margin-right: 5px; color: #262626;" }, "[Url]:"),
+            options.url
+          ]);
+
+          content.push(url);
+        }
+
+        // Message
+        if (options.message) {
+          let message = h("div", { style: "color: #8c8c8c;" }, [
+            h("span", { style: "margin-right: 5px; color: #262626;" }, "[Message]:"),
+            options.message
+          ]);
+
+          content.push(message);
+        }
+
+        // Notice desciption
+        return h("div", { style: "font-size: 14px; white-space:normal; word-break:break-all; word-wrap:break-word;" }, content);
+      }
+    });
+  }
+  // 其它环境仅提示概要信息
+  else {
+    Message.error({
+      closable: true,
+      content: options.message || options.msg
+    });
+  }
+};
 
 
 
@@ -80,7 +144,7 @@ const request = new Request({
   baseURL: baseURL,
   interceptors: {
     requestInterceptor: (config) => {
-      const token = getToken()
+      const token = authorization.getToken()
       if (token) {
         config.headers.Authorization = token
       }
@@ -90,17 +154,51 @@ const request = new Request({
       return err
     },
     responseInterceptor: (res) => {
-      return res.data
-    },
-    responseInterceptorCatch: (error) => {
-      if (error.response) {
-        const data = error.response.data
-        const status = error.response.status
-        notification.error({
-          message: status,
-          description: data.message ? data.message : '--'
-        })
+      const data = res.data
+      const error = {
+        type: 'error',
+        title: '操作失败',
+        method: res.config.method,
+        url: res.config.url,
+        status: res.status,
+        code: res.data.code,
+        message: res.data.message
       }
+
+      // 请求成功
+      if (data.code === 200) {
+        return data
+      }
+      // 未登录或登录过期
+      else if (data.code === 401) {
+        const route = {
+          path: '/user/login',
+        }
+        router.replace(router)
+      }
+      // 其它情况
+      else {
+        showMessage(error)
+        return Promise.reject(error)
+      }
+    },
+    responseInterceptorCatch: (e) => {
+      const error = {
+        type: 'error',
+        title: '系统提示',
+        method: error.config.method,
+        url: error.config.url,
+        msg: undefined
+      }
+      if (e.response && e.response.data && e.response.msg) {
+        error.msg = e.response.data.msg;
+      }
+      else if (e.message.includes('timeout') && e.code === 'ECONNABORTED') {
+        error.msg = e.message
+      } else {
+        error.msg = e.message
+      }
+      showMessage(error)
       return Promise.reject(error)
     }
   }

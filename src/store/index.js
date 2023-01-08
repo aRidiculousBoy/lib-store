@@ -3,7 +3,7 @@ import Vuex from "vuex";
 
 // 导入模块
 import permission from './modules/permission'
-import login from './modules/login'
+import user from './modules/user'
 
 Vue.use(Vuex);
 
@@ -13,6 +13,6 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     permission,
-    login
+    user
   },
 });
