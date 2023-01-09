@@ -264,7 +264,13 @@ export default {
     },
     handleEdit(task) {
       this.modal.mode = 'edit'
-      this.$refs.taskViewerRef?.open(task) 
+      this.modal.callback = () => {
+        this.loading = true
+        setTimeout(() => {
+          this.loading = false
+        }, 500)
+      }
+      this.$refs.taskViewerRef?.open(task)
     }
   }
 }

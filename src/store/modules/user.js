@@ -18,6 +18,10 @@ const user = {
     setToken(state, token) {
       state.token = token
       localStorage.setItem('token', token)
+    },
+    clearToken(state) {
+      state.token = undefined
+      localStorage.removeItem('token')
     }
   },
   actions: {
@@ -29,6 +33,9 @@ const user = {
       context.commit('setUsername', response.userName)
       context.commit('setToken', response.token)
       return response
+    },
+    async appLogout(context, payload) {
+      context.commit('clearToken')
     }
   }
 }

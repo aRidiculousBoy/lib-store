@@ -15,18 +15,16 @@
               <span class="username">a Ridiculous Boy</span>
               <a-dropdown>
                 <a-avatar :src="kenan" :size="40" style="cursor:pointer" />
-                <a-menu slot="overlay">
-                  <a-menu-item key="3">
+                <a-menu slot="overlay" @click="handleUserMenuClick">
+                  <a-menu-item key="faq">
                     帮助中心
                   </a-menu-item>
-                  <a-menu-divider />
-                  <a-menu-item key="0">
-                    <a href="http://www.alipay.com/">个人设置</a>
+                  <a-menu-item key="user-setting">
+                    <a>个人设置</a>
                   </a-menu-item>
-                  <a-menu-item key="1">
-                    <a href="http://www.taobao.com/">退出登录</a>
+                  <a-menu-item key="logout">
+                    <a>退出登录</a>
                   </a-menu-item>
-                  <a-menu-divider />
                 </a-menu>
               </a-dropdown>
             </div>
@@ -71,6 +69,13 @@ export default {
   methods: {
     navigateToHome() {
       this.$router.push('/')
+    },
+    handleUserMenuClick({ key }) {
+      if (key === 'logout') {
+        this.$store.dispatch('user/appLogout').then(() => {
+          this.$router.push('/login')
+        })
+      }
     }
   },
   computed: {

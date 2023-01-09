@@ -219,62 +219,62 @@ export const asyncRouterMap = [
     ]
   },
   // 权限测试
-  {
-    name: 'Permission',
-    path: '/permission',
-    component: Layout,
-    redirect: '/tester',
-    meta: {
-      title: '权限测试',
-      hasSubMenu: true,
-      icon: 'filter'
-    },
-    children: [
-      {
-        name: 'AdminOnly',
-        path: '/permission/admin-only',
-        component: AdminOnly,
-        meta: {
-          title: '管理员专享',
-          hasSubMenu: false,
-          icon: 'user',
-          roles: ['admin']
-        }
-      },
-      {
-        name: 'OpOnly',
-        path: '/permission/op-only',
-        component: OpOnly,
-        meta: {
-          title: '运营人员专享',
-          hasSubMenu: false,
-          icon: 'build',
-          roles: ['op']
-        }
-      },
-      {
-        name: 'AdminAndOp',
-        path: '/permission/admin-op',
-        component: AdminAndOp,
-        meta: {
-          title: '管理和运营共享',
-          hasSubMenu: false,
-          icon: 'share-alt',
-          roles: ['admin', 'op']
-        }
-      },
-      {
-        name: 'All',
-        path: '/permission/all',
-        component: All,
-        meta: {
-          title: '所有人共享',
-          hasSubMenu: false,
-          icon: 'global'
-        }
-      }
-    ]
-  },
+  // {
+  //   name: 'Permission',
+  //   path: '/permission',
+  //   component: Layout,
+  //   redirect: '/tester',
+  //   meta: {
+  //     title: '权限测试',
+  //     hasSubMenu: true,
+  //     icon: 'filter'
+  //   },
+  //   children: [
+  //     {
+  //       name: 'AdminOnly',
+  //       path: '/permission/admin-only',
+  //       component: AdminOnly,
+  //       meta: {
+  //         title: '管理员专享',
+  //         hasSubMenu: false,
+  //         icon: 'user',
+  //         roles: ['admin']
+  //       }
+  //     },
+  //     {
+  //       name: 'OpOnly',
+  //       path: '/permission/op-only',
+  //       component: OpOnly,
+  //       meta: {
+  //         title: '运营人员专享',
+  //         hasSubMenu: false,
+  //         icon: 'build',
+  //         roles: ['op']
+  //       }
+  //     },
+  //     {
+  //       name: 'AdminAndOp',
+  //       path: '/permission/admin-op',
+  //       component: AdminAndOp,
+  //       meta: {
+  //         title: '管理和运营共享',
+  //         hasSubMenu: false,
+  //         icon: 'share-alt',
+  //         roles: ['admin', 'op']
+  //       }
+  //     },
+  //     {
+  //       name: 'All',
+  //       path: '/permission/all',
+  //       component: All,
+  //       meta: {
+  //         title: '所有人共享',
+  //         hasSubMenu: false,
+  //         icon: 'global'
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '*',
     redirect: '/exception/404'

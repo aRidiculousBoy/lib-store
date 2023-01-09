@@ -26,10 +26,8 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const token = authorization.getToken()
-
   // 已登录
   if (token) {
-    debugger
     if (to.path === '/login') {
       next({
         path: '/',
@@ -43,7 +41,6 @@ router.beforeEach((to, from, next) => {
   }
   // 未登录
   else {
-    debugger
     if (configs.whiteList.includes(to.path)) {
       next()
     } 
