@@ -39,6 +39,19 @@ module.exports = {
     },
     externals: {
       webConfigs: 'webConfigs'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.worker\.js$/,
+          use: {
+            loader: 'worker-loader',
+            options: {
+              inline: 'fallback'
+            }
+          }
+        }
+      ]
     }
   },
   // 根据环境变量输出到构建目录

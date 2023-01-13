@@ -15,13 +15,21 @@
 import NotFound from '@/assets/svg/404.svg'
 export default {
   name: 'NotFound',
-  inject: ['navigateToHome'],
   data() {
     return {
       NotFound
+    }
+  },
+  methods: {
+    navigateToHome() {
+      this.$router.replace({
+        path: '/'
+      })
     }
   }
 }
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+
+</style>

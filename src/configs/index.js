@@ -8,7 +8,7 @@ export const networkTimeout = 5000
 const apiPaths = {
   development: '/api',
   test: 'https://www.bootcdn.com',
-  production: '/api'
+  production: '/'
 }
 
 export const baseURL = apiPaths[appMode]

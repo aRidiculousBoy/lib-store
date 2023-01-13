@@ -1,7 +1,9 @@
 import request from '@/service'
 
+const prefix = '/api'
+
 const USERAPI = {
-  LOGINAPI: '/user/login'
+  LOGINAPI: prefix + '/user/login'
 }
 
 export const appLoginRequest = (payload, isRemeber = false) => {

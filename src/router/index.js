@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import routes from '@/routes'
-import store from '@/store'
 import configs from '@/configs'
 import authorization from '@/utils/authorization'
 

@@ -2,7 +2,7 @@ import axios from 'axios'
 import authorization from '@/utils/authorization'
 import config from '@/configs'
 import { notification as Notice, message as Message } from 'ant-design-vue'
-import { baseURL, networkTimeout } from '@/configs'
+import { networkTimeout } from '@/configs'
 import router from '@/router'
 
 const showMessage = options => {
@@ -141,7 +141,6 @@ class Request {
 
 const request = new Request({
   timeout: networkTimeout,
-  baseURL: baseURL,
   interceptors: {
     requestInterceptor: (config) => {
       const token = authorization.getToken()
@@ -186,8 +185,8 @@ const request = new Request({
       const error = {
         type: 'error',
         title: '系统提示',
-        method: error.config.method,
-        url: error.config.url,
+        method: e.config.method,
+        url: e.config.url,
         msg: undefined
       }
       if (e.response && e.response.data && e.response.msg) {

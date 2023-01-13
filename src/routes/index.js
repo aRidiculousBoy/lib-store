@@ -35,189 +35,20 @@ const AdminAndOp = () => import('@views/permission/admin-and-op')
 const All = () => import('@views/permission/all')
 
 
+// 应用内组件
+const FileList = () => import('@views/file-list')
+const Album = () => import('@views/album')
+const Favor = () => import('@views/favor')
+const Share = () => import('@views/share')
+const Bin = () => import('@views/bin')
+
 // 空布局组件 主要用于给二级路由占位
 const RouteView = {
   render: (h) => h('router-view')
 }
 
 export const asyncRouterMap = [
-  {
-    name: 'List',
-    path: '/list',
-    component: Layout,
-    redirect: '/list/table',
-    meta: {
-      title: '列表页',
-      hasSubMenu: true,
-      icon: 'windows'
-    },
-    children: [
-      {
-        name: 'BasicList',
-        path: '/list/basic',
-        component: BasicList,
-        meta: {
-          title: '标准列表',
-          hasSubMenu: false,
-          icon: 'code-sandbox'
-        }
-      },
-      {
-        name: 'QueryTable',
-        path: '/list/table',
-        component: QueryTable,
-        meta: {
-          title: '查询表格',
-          hasSubMenu: false,
-          icon: 'ordered-list'
-        }
-      },
-      {
-        name: 'CardList',
-        path: '/list/card',
-        component: CardList,
-        meta: {
-          title: '卡片列表',
-          hasSubMenu: false,
-          icon: 'appstore'
-        }
-      }
-    ]
-  },
-  {
-    name: 'Form',
-    path: '/form',
-    redirect: '/form/standard',
-    component: Layout,
-    meta: {
-      title: '表单页',
-      hasSubMenu: true,
-      icon: 'fire'
-    },
-    children: [
-      {
-        name: 'StandardForm',
-        path: '/form/standard',
-        component: StandardForm,
-        meta: {
-          title: '基础表单',
-          icon: 'form'
-        }
-      },
-      {
-        name: 'StepForm',
-        path: '/form/step',
-        component: StepForm,
-        meta: {
-          title: '分步表单',
-          icon: 'build'
-        }
-      },
-    ]
-  },
-  {
-    name: 'Exception',
-    path: '/exception',
-    component: Layout,
-    redirect: '/exception/403',
-    meta: {
-      title: '异常页',
-      icon: 'warning',
-      hasSubMenu: true
-    },
-    children: [
-      {
-        name: '403',
-        path: '/exception/403',
-        component: UnAuthorization,
-        meta: {
-          title: '403',
-          icon: 'lock',
-          hasSubMenu: false
-        }
-      },
-      {
-        name: '404',
-        path: '/exception/404',
-        component: NotFound,
-        meta: {
-          title: '404',
-          icon: 'question-circle',
-          hasSubMenu: false
-        }
-      },
-      {
-        name: '500',
-        path: '/exception/500',
-        component: ServerError,
-        meta: {
-          title: '500',
-          icon: 'close-circle',
-          hasSubMenu: false
-        }
-      },
-      {
-        name: 'CommingSoon',
-        path: '/exception/comming',
-        component: CommingSoon,
-        meta: {
-          title: '敬请期待',
-          icon: 'close-circle',
-          hasSubMenu: false
-        }
-      }
-    ]
-  },
-  {
-    name: 'Profile',
-    path: '/profile',
-    redirect: '/profile/center',
-    component: Layout,
-    meta: {
-      title: '个人页面',
-      icon: 'user',
-      hasSubMenu: true
-    },
-    children: [
-      {
-        name: 'UserCenter',
-        path: '/profile/center',
-        component: Center,
-        meta: {
-          title: '个人中心',
-          icon: 'fire',
-          hasSubMenu: false
-        }
-      },
-      {
-        name: 'UserSettings',
-        path: '/profile/settings',
-        component: Settings,
-        meta: {
-          title: '个人设置',
-          icon: 'setting',
-          hasSubMenu: false
-        }
-      }
-    ]
-  },
-  {
-    name: 'Test',
-    path: '/test',
-    component: Layout,
-    redirect: '/tester',
-    meta: {
-      title: 'Jser',
-      hasSubMenu: false,
-      icon: 'dashboard'
-    },
-    children: [
-      {
-        path: '/tester',
-        component: Jser
-      }
-    ]
-  },
+
   // 权限测试
   // {
   //   name: 'Permission',
@@ -275,55 +106,114 @@ export const asyncRouterMap = [
   //     }
   //   ]
   // },
-  {
-    path: '*',
-    redirect: '/exception/404'
-  }
+
 ]
+
+
 export const constantRouterMap = [
+  {
+    path: '/',
+    redirect: '/file-list'
+  },
   {
     name: 'Login',
     path: '/login',
     component: Login
   },
   {
-    path: '/',
-    redirect: '/dashboard'
-  },
-  {
-    name: 'Dashboard',
-    path: '/dashboard',
-    redirect: '/dashboard/workspace',
+    path: '/file-list',
     component: Layout,
+    redirect: '/file-list/0',
     meta: {
-      title: '仪表盘',
-      hasSubMenu: true,
-      icon: 'dashboard'
+      title: '文件',
+      hasSubMenu: false,
+      icon: 'file'
     },
     children: [
       {
-        name: 'Workspace',
-        path: '/dashboard/workspace',
-        component: Workspace,
-        meta: {
-          title: '工作台',
-          icon: 'smile',
-          hasSubMenu: false
-        }
-      },
-      {
-        name: 'Analysis',
-        path: '/dashboard/analysis',
-        component: Analysis,
-        meta: {
-          title: '分析页',
-          icon: 'pie-chart',
-          hasSubMenu: false
-        }
+        name: 'FileList',
+        path: '/file-list/:parentId',
+        component: FileList
       }
     ]
   },
-  ...asyncRouterMap
+  {
+    name: 'Album',
+    path: '/album',
+    component: Layout,
+    redirect: '/album',
+    meta: {
+      title: '相册',
+      hasSubMenu: false,
+      icon: 'picture'
+    },
+    children: [
+      {
+        path: '/album',
+        component: Album
+      }
+    ]
+  },
+  {
+    name: 'Favor',
+    path: '/favor',
+    component: Layout,
+    redirect: '/favor',
+    meta: {
+      title: '收藏夹',
+      hasSubMenu: false,
+      icon: 'database'
+    },
+    children: [
+      {
+        path: '/favor',
+        component: Favor
+      }
+    ]
+  },
+  {
+    name: 'Share',
+    path: '/share',
+    component: Layout,
+    redirect: '/share',
+    meta: {
+      title: '分享',
+      hasSubMenu: false,
+      icon: 'share-alt'
+    },
+    children: [
+      {
+        path: '/share',
+        component: Share
+      }
+    ]
+  },
+  {
+    name: 'RecycleBin',
+    path: '/recycle-bin',
+    component: Layout,
+    redirect: '/recycle-bin',
+    meta: {
+      title: '回收站',
+      hasSubMenu: false,
+      icon: 'rest'
+    },
+    children: [
+      {
+        path: '/recycle-bin',
+        component: Bin
+      }
+    ]
+  },
+  {
+    name: 'NotFound',
+    path: '/404',
+    component: NotFound
+  },
+  {
+    path: '*',
+    redirect: '/404'
+  }
 ]
 
 

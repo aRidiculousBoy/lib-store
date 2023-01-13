@@ -1,30 +1,13 @@
 <template>
   <div>
-    <a-menu
-      :default-selected-keys="defaultSelectKeys"
-      :default-open-keys="defaultOpenKeys"
-      :selected-keys="currentKeys"
-      :open-keys.sync="openKeys"
-      mode="inline"
-      theme="dark"
-      :inline-collapsed="false"
-      :forceSubMenuRender="true"
-    >
+    <a-menu :default-selected-keys="defaultSelectKeys" :default-open-keys="defaultOpenKeys" :selected-keys="currentKeys"
+      :open-keys.sync="openKeys" mode="inline" theme="dark" :inline-collapsed="false" :forceSubMenuRender="true">
       <template v-for="menu in routes">
-        <a-menu-item
-          v-if="!menu.meta.hasSubMenu"
-          @click="handleMenuClick(menu.path)"
-          :key="menu.children[0].path"
-        >
+        <a-menu-item v-if="!menu.meta.hasSubMenu" @click="handleMenuClick(menu.path)" :key="menu.children[0].path">
           <a-icon :type="menu.meta.icon" />
           <span>{{ menu.meta.title }}</span>
         </a-menu-item>
-        <sub-menu
-          v-else
-          :key="menu.path"
-          :menu-info="menu"
-          @menuItemClick="handleMenuClick"
-        ></sub-menu>
+        <sub-menu v-else :key="menu.path" :menu-info="menu" @menuItemClick="handleMenuClick"></sub-menu>
       </template>
     </a-menu>
   </div>
@@ -72,6 +55,7 @@ export default {
     $route: {
       handler(route) {
         const path = route.path
+
         this.currentKeys = [path]
         this.defaultSelectKeys = [path]
         const openKeys = route.matched
@@ -100,6 +84,7 @@ export default {
 #components-layout-demo-custom-trigger {
   height: 100%;
 }
+
 #components-layout-demo-custom-trigger .trigger {
   font-size: 18px;
   line-height: 64px;

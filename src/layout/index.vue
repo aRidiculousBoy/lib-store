@@ -33,7 +33,9 @@
         <a-layout-content :style="{
           margin: '24px 16px',
           padding: '24px',
-          minHeight: '280px'
+          minHeight: '280px',
+          backgroundColor:  '#fff',
+          borderTop: '1px solid #e9e9e9'
         }">
           <router-view></router-view>
         </a-layout-content>
