@@ -26,3 +26,8 @@ export const calculateHash = (chunkList) => {
     }
   })
 }
+
+// 获取文件扩展名
+export const getExt = (filename) => {
+  return filename.slice(filename.lastIndexOf('.'))
+}

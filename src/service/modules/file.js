@@ -12,7 +12,8 @@ const FILEAPI = {
   SetFolderNameAPI: prefix + '/user/resource/folder/',
   RemoveFileAPI: prefix + '/user/resource/file/',
   RemoveFolderAPI: prefix + '/user/resource/folder/',
-  CreateFolderAPI: prefix + '/user/resource/folder/'
+  CreateFolderAPI: prefix + '/user/resource/folder/',
+  CancelUploadAPI: prefix + '/user/undo/resource/'
 }
 
 // 获取用户文件列表
@@ -68,7 +69,6 @@ export const renameFolderRequest = (payload) => {
 
 // 删除文件
 export const removeFileRequest = (payload) => {
-  debugger
   return request.delete({
     url: FILEAPI.RemoveFileAPI + payload.id + `/${payload.isPhysical ? 1 : 0}`
   })
@@ -91,6 +91,11 @@ export const createFolderRequest = (payload) => {
   })
 }
 
+export const cancelUploadRequest = (payload) => {
+  return request.delete({
+    url: FILEAPI.CancelUploadAPI + payload.fileId
+  })
+}
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -100,5 +105,6 @@ export default {
   renameFolderRequest,
   removeFileRequest,
   removeFolderRequest,
-  createFolderRequest
+  createFolderRequest,
+  cancelUploadRequest
 }

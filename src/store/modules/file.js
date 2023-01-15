@@ -41,6 +41,10 @@ const file = {
     async createFolder(context, payload) {
       const response = fileService.createFolderRequest(payload)
       return response
+    },
+    async cancelUpload(context, payload) {
+      const response = fileService.cancelUploadRequest(payload)
+      return response
     }
   }
 }

@@ -182,6 +182,9 @@ const request = new Request({
       }
     },
     responseInterceptorCatch: (e) => {
+      if (!e.config?.method) {
+        return false
+      }
       const error = {
         type: 'error',
         title: '系统提示',

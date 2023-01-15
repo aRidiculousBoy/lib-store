@@ -34,6 +34,8 @@
     <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin" />
     <file-namer ref="fileNamerRef" />
     <create-folder ref="createFolderRef" />
+    <progress-viewer ref="progressViewerRef" :runningTasks="uploadingList" @pauseUpload="handlePauseUpload"
+      @cancelUpload="handleCancelUpload" @continueUpload="handleContinueUpload" />
   </div>
 </template>
 
@@ -43,9 +45,10 @@ import FileViewer from './components/file-viewer'
 import FileNamer from './components/file-namer'
 import Uploader from './components/uploader'
 import CreateFolder from './components/create-folder'
+import ProgressViewer from './components/progress-viewer'
 
 import { Modal } from 'ant-design-vue'
-import { createChunks, calculateHash } from './utils'
+import { createChunks, calculateHash, getExt } from './utils'
 import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
@@ -57,15 +60,22 @@ export default {
   name: 'file-list',
   data() {
     // 文件分块上传成功的回调
-    const successCallback = (response, index) => {
-      console.log('response => ', response)
-      console.log('index => ', index)
+    const successCallback = (response, fileContext) => {
+      if (response.allSuccess) {
+        fileContext.isFinished = true
+        fileContext.isUploading = false
+        this.getPageData(this.$route.params.parentId)
+      }
+      fileContext.successChunks.push(response.chunkNum)
+      fileContext.percentage = Math.ceil((fileContext.successChunks.length / fileContext.chunkList.length) * 100)
     }
+    // 文件分块上传失败的回调
+    const failedCallback = (response, fileContext) => { }
     return {
       folders: [],
       files: [],
       uploadingList: [],
-      failedCallback: () => { },
+      failedCallback,
       successCallback,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       Size,
@@ -77,7 +87,8 @@ export default {
     FileViewer,
     FileNamer,
     Uploader,
-    CreateFolder
+    CreateFolder,
+    ProgressViewer
   },
   methods: {
     async getPageData(parentId) {
@@ -144,7 +155,6 @@ export default {
     },
     async handleUploadFile(file) {
       const parentId = this.$route.params.parentId
-      const CancelToken = axios.CancelToken
       const fileContext = {
         file,
         parentId,
@@ -156,29 +166,31 @@ export default {
         percentage: 0,
         isUploading: false,
         isFinished: false,
-        cancel: CancelToken.source()
+        cancel: undefined,
+        ext: getExt(file.name)
       }
       // 创建分片列表
-      const chunkList = createChunks(file)
-      fileContext.hash = await calculateHash(chunkList)
+      fileContext.chunkList = createChunks(file)
+      fileContext.hash = await calculateHash(fileContext.chunkList)
+      this.uploadingList.push(fileContext)
       // 云端已经存储?
       let uploadedList = await this.$store.dispatch('file/getFileProgress', {
         hash: fileContext.hash
       })
-      uploadedList = uploadedList === null ? [] : uploadedList
+      uploadedList = Array.isArray(uploadedList) ? uploadedList : new Array(fileContext.chunkList.length)
       const isServerStore = !!uploadedList.length
-
       if (isServerStore) {
         const length = fileContext.chunkList.length
+        fileContext.successChunks = uploadedList
+        fileContext.percentage = Math.ceil(uploadedList.length / length  * 100)
         if (uploadedList.length === length) {
           fileContext.isFinished = true
-          return
+          return false
         }
-        fileContext.percentage = Math.ceil(uploadedList.length / length)
       }
 
-
-      fileContext.chunkList = chunkList.map(({ file }, index) => {
+      fileContext.isUploading = true
+      fileContext.chunkList = fileContext.chunkList.map(({ file }, index) => {
         return {
           file,
           index: index + 1,
@@ -190,6 +202,8 @@ export default {
     },
     async handleUploadChunks(fileContext, uploadedList, successCallback, failedCallback) {
       const tasks = []
+      const CancelToken = axios.CancelToken
+      fileContext.cancel = CancelToken.source()
       fileContext.chunkList.filter(({ index }) => !uploadedList.includes(index))
         .map(({ file, index, fileName }) => {
           const formData = new FormData()
@@ -214,7 +228,7 @@ export default {
                 cancelToken: fileContext.cancel.token
               })
                 .then((response) => {
-                  successCallback && successCallback(response, index)
+                  successCallback && successCallback(response, fileContext)
                 })
             )
           )
@@ -235,11 +249,29 @@ export default {
         })
       }
     },
+    handlePauseUpload(task) {
+      task.isUploading = false
+      task.cancel.cancel()
+    },
+    handleCancelUpload({ task, index, callback }) {
+      const payload = {
+        fileId: task.hash
+      }
+      this.$store.dispatch('file/cancelUpload', payload).then(response => {
+        task.cancel.cancel()
+        this.uploadingList.splice(index, 1)
+        callback && callback()
+      })
+    },
     onCreateFolderClick() {
       const callback = () => {
         this.getPageData(this.$route.params.parentId)
       }
       this.$refs.createFolderRef?.open(callback)
+    },
+    handleContinueUpload(task) {
+      task.isUploading = true
+      this.handleUploadChunks(task, task.successChunks, this.successCallback)
     }
   },
   computed: {
@@ -288,6 +320,7 @@ export default {
 <style scoped lang="less">
 .file-list {
   padding: 8px 40px 0 24px;
+  background-color: #fff;
 }
 
 .list-header {

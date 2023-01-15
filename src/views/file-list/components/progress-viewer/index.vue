@@ -1,0 +1,246 @@
+<template>
+  <div class="progress-viewer">
+    <a-collapse accordion :defaultActiveKey="1" expandIconPosition="right">
+      <a-collapse-panel key="1" :disabled="false">
+        <template slot="header">
+          上传进度
+        </template>
+        <div class="file-progress-viewer" v-for="(task, index) in runningTasks" :key="task.hash">
+          <div class="file-cover">
+            <img :src="typeMapper[task.ext]">
+          </div>
+          <div class="bar">
+            <div class="text" :title="task.filename">{{ task.filename }}</div>
+            <a-progress :percent="task.percentage" :showInfo="false" :status="task.isUploading ? 'active' : 'normal'" />
+          </div>
+          <div class="action" v-if="!task.isFinished">
+            <a-space>
+              <a-tooltip>
+                <template slot="title">
+                  取消上传
+                </template>
+                <img :src="closeSvg" @click="openTaskModal(task, index)">
+              </a-tooltip>
+              <a-tooltip v-if="task.isUploading">
+                <template slot="title">
+                  暂停
+                </template>
+                <img :src="pauseSvg" @click="handlePauseUpload(task)">
+              </a-tooltip>
+              <a-tooltip v-else>
+                <template slot="title">
+                  继续
+                </template>
+                <img :src="refreshSvg" @click="handleContinueUpload(task)">
+              </a-tooltip>
+            </a-space>
+          </div>
+        </div>
+        <template slot="extra">
+          <a-space class="more-action">
+            <a-tooltip v-if="isCancelable">
+              <template slot="title">全部取消</template>
+              <img :src="closeSvg" @click.stop>
+            </a-tooltip>
+            <a-tooltip v-if="runningTasks.length">
+              <template slot="title">
+                全部暂停
+              </template>
+              <img :src="pauseSvg" @click.stop>
+            </a-tooltip>
+          </a-space>
+        </template>
+      </a-collapse-panel>
+    </a-collapse>
+    <a-modal v-model="modal.visible" :title="modal.task?.filename + ' - 取消上传'">
+      <p>确定取消文件『{{ modal.task?.filename }}』的上传吗</p>
+      <template slot="footer">
+        <a-button @click="() => modal.visible = false">取消</a-button>
+        <a-button type="danger" @click="handleCancelUpload">取消上传</a-button>
+      </template>
+    </a-modal>
+  </div>
+</template>
+
+<script>
+import folderSvg from '@/assets/svg/folder.svg'
+import jpgSvg from '@/assets/svg/jpg.svg'
+import mp3Svg from '@/assets/svg/mp3.svg'
+import mp4Svg from '@/assets/svg/mp4.svg'
+import pdfSvg from '@/assets/svg/pdf.svg'
+import pngSvg from '@/assets/svg/png.svg'
+
+import refreshSvg from '@/assets/svg/refresh.svg'
+import pauseSvg from '@/assets/svg/pause.svg'
+import closeSvg from '@/assets/svg/close.svg'
+
+
+
+
+const typeMapper = {
+  'folder': folderSvg,
+  '.jpg': jpgSvg,
+  '.mp3': mp3Svg,
+  '.mp4': mp4Svg,
+  '.pdf': pdfSvg,
+  '.png': pngSvg
+}
+
+
+export default {
+  name: 'progress-viewer',
+  props: {
+    runningTasks: {
+      type: Array,
+      default: () => ([])
+    }
+  },
+  data() {
+    return {
+      typeMapper,
+      refreshSvg,
+      pauseSvg,
+      closeSvg,
+      modal: {
+        visible: false,
+        task: undefined,
+        index: undefined
+      }
+    }
+  },
+  computed: {
+    isCancelable() {
+      // 只要有一个文件没有完成上传就允许用户点击全部取消 取消没有完成上传任务的文件
+      const isCancelable = this.runningTasks.some(task => !task.isFinished)
+      return isCancelable
+    },
+    isContinuable() {
+      // 只要有一个没有完成上传的文件就允许用户点击全部继续 继续上传没有完成上传的文件
+      const isContinuable = this.runningTasks.some(task => task.isUploading)
+      return isContinuable
+    }
+  },
+  methods: {
+    handlePauseUpload(task) {
+      this.$emit('pauseUpload', task)
+    },
+    openTaskModal(task, index) {
+      this.modal.task = task
+      this.modal.index = index
+      this.modal.visible = true
+
+      // 取消模态框的显隐与绑定的文件的状态相关 这里需要监听task的进度 如果进度为100% 则关闭模态框并且取消监听
+      const taskUnWatcher = this.$watch(() => task.isFinished, () => {
+        if (task.isFinished) {
+          this.modal.visible = false
+          taskUnWatcher()
+        }
+      })
+    },
+    handleContinueUpload(task) {
+      this.$emit('continueUpload', task)
+    },
+    handleCancelUpload() {
+      const { task, index } = this.modal
+      const callback = () => {
+        this.modal.visible = false
+      }
+      const payload = {
+        task,
+        index,
+        callback
+      }
+      this.$emit('cancelUpload', payload)
+    }
+  }
+}
+</script>
+
+<style scoped lang="less">
+.progress-viewer {
+  width: 18%;
+  position: absolute;
+  right: 8px;
+  bottom: 16%;
+}
+
+.file-progress-viewer {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  transition: all .1s ease;
+
+  &:hover {
+    background-color: #DCDFE6;
+  }
+
+  .file-cover {
+    width: 76px;
+    margin: 8px 0;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .bar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 0 12px;
+    flex: 1;
+    overflow: hidden;
+    font-size: 16px;
+
+    .text {
+      flex: 1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+    }
+  }
+
+  .action {
+    margin: 0 16px;
+
+    img {
+      padding: 2px;
+      width: 28px;
+      border: 1px solid #e9e9e9;
+      border-radius: 50%;
+      background-color: #fff;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.more-action {
+  img {
+    padding: 2px;
+    width: 28px;
+    border: 1px solid #e9e9e9;
+    border-radius: 50%;
+    background-color: #fff;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+/deep/ .ant-collapse-content-box {
+  padding: 0px;
+}
+
+/deep/ .ant-collapse-header {
+  background: #fff;
+}
+
+/deep/ .ant-collapse-content-box {
+  box-sizing: content-box;
+}
+</style>
