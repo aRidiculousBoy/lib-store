@@ -37,26 +37,41 @@
           </div>
         </div>
         <template slot="extra">
-          <a-space class="more-action">
-            <a-tooltip v-if="isCancelable">
+          <a-space v-if="isCancelable" class="more-action">
+            <a-tooltip>
               <template slot="title">全部取消</template>
-              <img :src="closeSvg" @click.stop>
+              <img :src="closeSvg" @click.stop="openCancelerModal">
             </a-tooltip>
-            <a-tooltip v-if="runningTasks.length">
+            <a-tooltip>
               <template slot="title">
-                全部暂停
+                {{ text }}
               </template>
-              <img :src="pauseSvg" @click.stop>
+              <img :src="actionSvg" @click.stop="handleTriggerAction">
             </a-tooltip>
           </a-space>
         </template>
       </a-collapse-panel>
     </a-collapse>
-    <a-modal v-model="modal.visible" :title="modal.task?.filename + ' - 取消上传'">
+
+    <a-modal v-model="modal.visible" :width="512"
+      @hook:beforeDestroy="() => this.modal.taskUnWatcher && this.modal.taskUnWatcher()">
       <p>确定取消文件『{{ modal.task?.filename }}』的上传吗</p>
       <template slot="footer">
         <a-button @click="() => modal.visible = false">取消</a-button>
         <a-button type="danger" @click="handleCancelUpload">取消上传</a-button>
+      </template>
+      <template slot="title">
+        <p class="modal-title" :title="modal.task?.filename + ' - 取消上传'">{{ modal.task?.filename + ' - 取消上传' }}</p>
+      </template>
+    </a-modal>
+
+    <a-modal v-model="cancelerModal.visible" :width="512" title="全部取消上传"
+      @hook:beforeDestroy="() => this.cancelerModal.cancelerUnwatcher && this.cancelerModal.cancelerUnwatcher()"
+      @ok="handleCancelAllUpload">
+      <p>列表中有未上传完成的文件，确定要放弃上传吗？</p>
+      <template slot="footer">
+        <a-button @click="() => cancelerModal.visible = false">取消</a-button>
+        <a-button type="danger" @click="handleCancelAllUpload">取消上传</a-button>
       </template>
     </a-modal>
   </div>
@@ -104,8 +119,14 @@ export default {
       modal: {
         visible: false,
         task: undefined,
-        index: undefined
-      }
+        index: undefined,
+        taskUnWatcher: null
+      },
+      cancelerModal: {
+        visible: false,
+        cancelerUnwatcher: null
+      },
+      text: '全部暂停',
     }
   },
   computed: {
@@ -114,10 +135,8 @@ export default {
       const isCancelable = this.runningTasks.some(task => !task.isFinished)
       return isCancelable
     },
-    isContinuable() {
-      // 只要有一个没有完成上传的文件就允许用户点击全部继续 继续上传没有完成上传的文件
-      const isContinuable = this.runningTasks.some(task => task.isUploading)
-      return isContinuable
+    actionSvg() {
+      return this.text === '全部暂停' ? pauseSvg : refreshSvg
     }
   },
   methods: {
@@ -128,14 +147,22 @@ export default {
       this.modal.task = task
       this.modal.index = index
       this.modal.visible = true
-
       // 取消模态框的显隐与绑定的文件的状态相关 这里需要监听task的进度 如果进度为100% 则关闭模态框并且取消监听
-      const taskUnWatcher = this.$watch(() => task.isFinished, () => {
+      this.modal.taskUnWatcher = this.$watch(() => task.isFinished, () => {
         if (task.isFinished) {
           this.modal.visible = false
-          taskUnWatcher()
+          this.modal.taskUnWatcher()
         }
       })
+    },
+    openCancelerModal() {
+      this.cancelerModal.visible = true
+      this.cancelerModal.cancelerUnwatcher = this.$watch(() => this.runningTasks, (value) => {
+        const isCancelable = value.some(v => !v.isFinished)
+        if (!isCancelable) {
+          this.cancelerModal.cancelerUnwatcher()
+        }
+      }, { deep: true })
     },
     handleContinueUpload(task) {
       this.$emit('continueUpload', task)
@@ -151,6 +178,32 @@ export default {
         callback
       }
       this.$emit('cancelUpload', payload)
+    },
+    handleTriggerAction() {
+      const actionType = this.text === '全部暂停' ? 'pause' : 'continue'
+      if (actionType === 'continue') {
+        this.text = '全部暂停'
+        this.handleContinueAllUpload()
+      }
+      else {
+        this.text = '全部继续'
+        this.handlePauseAllUpload()
+      }
+    },
+    handlePauseAllUpload() {
+      this.$emit('pauseAllUpload')
+    },
+    handleContinueAllUpload() {
+      this.$emit('continueAllUpload')
+    },
+    handleCancelAllUpload() {
+      const callback = () => {
+        this.cancelerModal.visible = false
+      }
+      const payload = {
+        callback
+      }
+      this.$emit('cancelAllUpload', payload)
     }
   }
 }
@@ -230,6 +283,13 @@ export default {
       cursor: pointer;
     }
   }
+}
+
+.modal-title {
+  width: 92%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /deep/ .ant-collapse-content-box {

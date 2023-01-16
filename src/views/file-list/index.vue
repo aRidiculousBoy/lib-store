@@ -34,8 +34,13 @@
     <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin" />
     <file-namer ref="fileNamerRef" />
     <create-folder ref="createFolderRef" />
-    <progress-viewer ref="progressViewerRef" :runningTasks="uploadingList" @pauseUpload="handlePauseUpload"
-      @cancelUpload="handleCancelUpload" @continueUpload="handleContinueUpload" />
+    <transition name="progress-viewer-transition" enter-active-class="animate__animated animate__fadeInRight" leave-active-class="animate__animated animate__fadeOutRight">
+      <progress-viewer v-if="uploadingList.length" ref="progressViewerRef" :runningTasks="uploadingList"
+        @pauseUpload="handlePauseUpload" @cancelUpload="handleCancelUpload" @continueUpload="handleContinueUpload"
+        @pauseAllUpload="handlePauseAllUpload" @continueAllUpload="handleContinueAllUpload"
+        @cancelAllUpload="handleCancelAllUpload" />
+    </transition>
+
   </div>
 </template>
 
@@ -182,7 +187,7 @@ export default {
       if (isServerStore) {
         const length = fileContext.chunkList.length
         fileContext.successChunks = uploadedList
-        fileContext.percentage = Math.ceil(uploadedList.length / length  * 100)
+        fileContext.percentage = Math.ceil(uploadedList.length / length * 100)
         if (uploadedList.length === length) {
           fileContext.isFinished = true
           return false
@@ -272,6 +277,36 @@ export default {
     handleContinueUpload(task) {
       task.isUploading = true
       this.handleUploadChunks(task, task.successChunks, this.successCallback)
+    },
+    handlePauseAllUpload() {
+      const uploadingFiles = this.uploadingList.filter(file => file.isUploading)
+      for (fileContext of uploadingFiles) {
+        this.handlePauseUpload(fileContext)
+      }
+    },
+    handleCancelAllUpload({ callback }) {
+      const cancelableFiles = this.uploadingList.filter(file => !file.isFinished)
+      const promises = []
+      for (let i = 0; i < cancelableFiles.length; i++) {
+        const fileContext = cancelableFiles[i]
+        const payload = {
+          fileId: fileContext.hash
+        }
+        promises.push(this.$store.dispatch('file/cancelUpload', payload).then(response => {
+          const index = this.uploadingList.indexOf(fileContext)
+          fileContext.cancel.cancel()
+          this.uploadingList.splice(index, 1)
+        }))
+      }
+      Promise.all(promises).then(() => {
+        callback && callback()
+      })
+    },
+    handleContinueAllUpload() {
+      const pendingFiles = this.uploadingList.filter(file => !file.isFinished && !file.isUploading)
+      for (const pendingFile of pendingFiles) {
+        this.handleContinueUpload(pendingFile)
+      }
     }
   },
   computed: {
