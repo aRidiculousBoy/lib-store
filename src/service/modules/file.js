@@ -13,7 +13,9 @@ const FILEAPI = {
   RemoveFileAPI: prefix + '/user/resource/file/',
   RemoveFolderAPI: prefix + '/user/resource/folder/',
   CreateFolderAPI: prefix + '/user/resource/folder/',
-  CancelUploadAPI: prefix + '/user/undo/resource/'
+  CancelUploadAPI: prefix + '/user/undo/resource/',
+  RecoverFileAPI: prefix + '/user/resource/file/rc/',
+  RecoverFolderAPI: prefix + '/user/resource/folder/rc/'
 }
 
 // 获取用户文件列表
@@ -91,9 +93,24 @@ export const createFolderRequest = (payload) => {
   })
 }
 
+// 取消文件上传
 export const cancelUploadRequest = (payload) => {
   return request.delete({
     url: FILEAPI.CancelUploadAPI + payload.fileId
+  })
+}
+
+// 恢复回收站文件
+export const recoverFileRequest = (payload) => {
+  return request.put({
+    url: FILEAPI.RecoverFileAPI + payload.id
+  })
+}
+
+// 恢复回收站文件夹
+export const recoverFolderRequest = (payload) => {
+  return request.put({
+    url: FILEAPI.RecoverFolderAPI + payload.id
   })
 }
 export default {
@@ -106,5 +123,7 @@ export default {
   removeFileRequest,
   removeFolderRequest,
   createFolderRequest,
-  cancelUploadRequest
+  cancelUploadRequest,
+  recoverFileRequest,
+  recoverFolderRequest
 }

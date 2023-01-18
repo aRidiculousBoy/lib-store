@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-menu :default-selected-keys="defaultSelectKeys" :default-open-keys="defaultOpenKeys" :selected-keys="currentKeys"
+    <a-menu :default-selected-keys="defaultSelectKeys" :default-open-keys="defaultOpenKeys" v-model="currentKeys"
       :open-keys.sync="openKeys" mode="inline" theme="dark" :inline-collapsed="false" :forceSubMenuRender="true">
       <template v-for="menu in routes">
         <a-menu-item v-if="!menu.meta.hasSubMenu" @click="handleMenuClick(menu.path)" :key="menu.children[0].path">
@@ -55,8 +55,7 @@ export default {
     $route: {
       handler(route) {
         const path = route.path
-
-        this.currentKeys = [path]
+        this.currentKeys = route.matched.map(r => r.path)
         this.defaultSelectKeys = [path]
         const openKeys = route.matched
           .slice(0, route.matched.length - 1)

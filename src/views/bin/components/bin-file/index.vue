@@ -1,12 +1,12 @@
 <template>
-  <div class="file" :title="name" :style="fileStyle" draggable="true" @contextmenu.prevent="handleContextMenu"
-    @click="handleClick">
+  <div class="bin-file" :title="name" :style="fileStyle" draggable="true" @contextmenu.prevent="handleContextMenu">
     <img :src="typeMapper[extension]" class="file-cover">
     <div class="name">{{ name }}</div>
   </div>
 </template>
 
 <script>
+// 待优化... 有问题
 import folderSvg from '@/assets/svg/folder.svg'
 import jpgSvg from '@/assets/svg/jpg.svg'
 import mp3Svg from '@/assets/svg/mp3.svg'
@@ -43,8 +43,8 @@ export default {
       type: String,
       required: true
     },
-    // 创建日期
-    createTime: {
+    // 删除日期
+    deleteTime: {
       type: String,
       required: true
     },
@@ -53,12 +53,6 @@ export default {
       required: true
     },
     extension: {
-      type: String
-    },
-    size: {
-      type: Number
-    },
-    fileId: {
       type: String
     }
   },
@@ -80,97 +74,68 @@ export default {
       this.$contextmenu({
         items: [
           {
-            label: "下载",
-            onClick: () => {
-              this.handleDownLoad()
-            },
-            customClass: 'context-menu-item'
-          },
-          { label: "分享" },
-          {
-            label: "收藏",
-            divided: true,
-            customClass: 'context-menu-item'
-
-          },
-          {
-            label: "重命名",
-            onClick: () => {
-              this.handleReanme()
-            },
-            customClass: 'context-menu-item'
-
-          },
-          {
-            label: "移动",
-            customClass: 'context-menu-item'
-          },
-          {
             label: "查看详细信息",
-            divided: true,
             onClick: () => {
               this.handleViewDetails()
-            },
-            customClass: 'context-menu-item'
+            }
+          }
+          ,
+          {
+            label: "恢复",
+            onClick: () => {
+              this.handleRecover()
+            }
           },
           {
-            label: "移动到回收站",
+            label: "彻底删除",
             onClick: () => {
-              this.handleMoveBin()
-            },
-            customClass: 'context-menu-item'
+              this.handleDelete()
+            }
           },
         ],
+        customClass: "custom-class",
         event,
-        //x: event.clientX,
-        //y: event.clientY,
-        customClass: "file-context-menu",
         zIndex: 3,
         minWidth: 180
       });
       return false;
     },
     handleClick() {
-      const { type, id, extension } = this.$props
-      const payload = {
-        type,
-        id,
-        extension
-      }
-      this.$emit('click', payload)
-    },
-    handleReanme() {
-      const payload = {
-        id: this.id,
-        name: this.name,
-        type: this.type
-      }
-      this.$emit('rename', payload)
-    },
-    handleViewDetails() {
-      this.$emit('view', { ...this.$props, ...this.$attrs })
-    },
-    handleMoveBin() {
-      const payload = {
-        id: this.id,
-        name: this.name,
-        type: this.type
-      }
-      this.$emit('moveBin', payload)
-    },
-    handleDownLoad() {
       const payload = {
         type: this.type,
         id: this.id
       }
-      this.$emit('download', payload)
+      this.$emit('click', payload)
+    },
+    handleDelete() {
+      const { id, type } = this.$props
+      const payload = {
+        id,
+        type,
+        isPhysical: true,
+      }
+      this.$emit('delete', payload)
+    },
+    handleRecover() {
+      const { id, type } = this.$props
+      const payload = {
+        id,
+        type
+      }
+      this.$emit('recover', payload)
+    },
+    handleViewDetails() {
+      const payload = {
+        ...this.$props
+      }
+      this.$emit('view', payload)
     }
   }
 }
 </script>
 
 <style scoped lang="less">
-.file {
+.bin-file {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -199,8 +164,9 @@ export default {
   width: 64%;
   height: 108px;
 }
-
-/deep/.contextmenu_menu {
-  padding: 12px !important;
+</style>
+<style>
+.custom-class .menu_item:nth-child(2) {
+  color: red;
 }
 </style>

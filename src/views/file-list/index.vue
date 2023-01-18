@@ -25,7 +25,7 @@
         <a-row :gutter="[4, 16]" v-for="row in rowLength">
           <a-col :span="3" v-for="file in fileList.slice((row - 1) * 8, row * 8)">
             <file v-bind="file" @view="handleViewFile" @click="handleFileClick" @rename="handleRename"
-              @moveBin="handleMoveBin" @download="handleDownload"></file>
+              @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview"></file>
           </a-col>
         </a-row>
       </div>
@@ -34,7 +34,8 @@
     <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin" />
     <file-namer ref="fileNamerRef" />
     <create-folder ref="createFolderRef" />
-    <transition name="progress-viewer-transition" enter-active-class="animate__animated animate__fadeInRight" leave-active-class="animate__animated animate__fadeOutRight">
+    <transition name="progress-viewer-transition" enter-active-class="animate__animated animate__fadeInRight"
+      leave-active-class="animate__animated animate__fadeOutRight">
       <progress-viewer v-if="uploadingList.length" ref="progressViewerRef" :runningTasks="uploadingList"
         @pauseUpload="handlePauseUpload" @cancelUpload="handleCancelUpload" @continueUpload="handleContinueUpload"
         @pauseAllUpload="handlePauseAllUpload" @continueAllUpload="handleContinueAllUpload"
@@ -58,6 +59,7 @@ import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
 import axios from 'axios'
+import request from '@/service'
 
 const limit = pLimit(concurrent)
 
@@ -116,7 +118,7 @@ export default {
           path: `/file-list/${id}`,
         })
       } else {
-        console.log('文件预览逻辑')
+        this.handlePreview(payload)
       }
     },
     handleRename(payload) {
@@ -135,7 +137,7 @@ export default {
           this.moveBin(payload)
         },
         closable: true,
-        content: `确定将该文件/文件夹【${payload.name}】移入回收站吗`,
+        content: `确定将该文件/文件夹『${payload.name}』移入回收站吗`,
       })
     },
     moveBin(payload) {
@@ -307,6 +309,9 @@ export default {
       for (const pendingFile of pendingFiles) {
         this.handleContinueUpload(pendingFile)
       }
+    },
+    handlePreview(payload) {
+      console.log(payload)
     }
   },
   computed: {

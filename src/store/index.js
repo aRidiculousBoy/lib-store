@@ -5,6 +5,7 @@ import Vuex from "vuex";
 import permission from './modules/permission'
 import user from './modules/user'
 import file from './modules/file'
+import bin from './modules/bin'
 
 
 Vue.use(Vuex);
@@ -16,6 +17,7 @@ export default new Vuex.Store({
   modules: {
     permission,
     user,
-    file
+    file,
+    bin
   },
 });

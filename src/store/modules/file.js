@@ -1,5 +1,4 @@
 import fileService from '@service/modules/file'
-import { assignWith } from 'lodash'
 
 const file = {
   namespaced: true,
@@ -44,6 +43,14 @@ const file = {
     },
     async cancelUpload(context, payload) {
       const response = fileService.cancelUploadRequest(payload)
+      return response
+    },
+    async recoverFile(context, payload) {
+      const response = fileService.recoverFileRequest(payload)
+      return response
+    },
+    async recoverFolder(context, payload) {
+      const response = fileService.recoverFolderRequest(payload)
       return response
     }
   }

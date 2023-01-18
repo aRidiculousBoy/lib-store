@@ -174,6 +174,9 @@ const request = new Request({
           path: '/user/login',
         }
         router.replace(router)
+      } 
+      else if (!data?.code) {
+        return res
       }
       // 其它情况
       else {

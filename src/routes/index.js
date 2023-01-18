@@ -123,7 +123,7 @@ export const constantRouterMap = [
   {
     path: '/file-list',
     component: Layout,
-    redirect: '/file-list/0',
+    redirect: '/file-list',
     meta: {
       title: '文件',
       hasSubMenu: false,
@@ -132,8 +132,15 @@ export const constantRouterMap = [
     children: [
       {
         name: 'FileList',
-        path: '/file-list/:parentId',
-        component: FileList
+        path: '/file-list',
+        component: RouteView,
+        redirect: '/file-list/0',
+        children: [
+          {
+            path: '/file-list/:parentId',
+            component: FileList
+          }
+        ]
       }
     ]
   },
