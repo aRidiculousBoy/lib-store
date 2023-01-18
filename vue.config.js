@@ -1,6 +1,7 @@
 const { resolve } = require('path')
 
 const outputDir = process.env.VUE_APP_OUTPUT_DIR
+console.log('========================',outputDir)
 const publicPath = process.env.VUE_APP_PUBLIC_PATH
 module.exports = {
   runtimeCompiler: true,
