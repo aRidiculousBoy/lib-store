@@ -86,7 +86,12 @@ export default {
             },
             customClass: 'context-menu-item'
           },
-          { label: "分享" },
+          {
+            label: "分享",
+            onClick: () => {
+              this.handleShare()
+            }
+          },
           {
             label: "收藏",
             divided: true,
@@ -164,6 +169,12 @@ export default {
         id: this.id
       }
       this.$emit('download', payload)
+    },
+    handleShare() {
+      const payload = {
+        ...this.$props
+      }
+      this.$emit('share', payload)
     }
   }
 }

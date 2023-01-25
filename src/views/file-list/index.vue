@@ -25,7 +25,7 @@
         <a-row :gutter="[4, 16]" v-for="row in rowLength">
           <a-col :span="3" v-for="file in fileList.slice((row - 1) * 8, row * 8)">
             <file v-bind="file" @view="handleViewFile" @click="handleFileClick" @rename="handleRename"
-              @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview"></file>
+              @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview" @share="handleShare"></file>
           </a-col>
         </a-row>
       </div>
@@ -41,7 +41,7 @@
         @pauseAllUpload="handlePauseAllUpload" @continueAllUpload="handleContinueAllUpload"
         @cancelAllUpload="handleCancelAllUpload" />
     </transition>
-
+    <file-sharer ref="fileSharerRef" />
   </div>
 </template>
 
@@ -52,6 +52,7 @@ import FileNamer from './components/file-namer'
 import Uploader from './components/uploader'
 import CreateFolder from './components/create-folder'
 import ProgressViewer from './components/progress-viewer'
+import FileSharer from './components/file-sharer'
 
 import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
@@ -59,7 +60,6 @@ import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
 import axios from 'axios'
-import request from '@/service'
 
 const limit = pLimit(concurrent)
 
@@ -95,7 +95,8 @@ export default {
     FileNamer,
     Uploader,
     CreateFolder,
-    ProgressViewer
+    ProgressViewer,
+    FileSharer
   },
   methods: {
     async getPageData(parentId) {
@@ -138,6 +139,7 @@ export default {
         },
         closable: true,
         content: `确定将该文件/文件夹『${payload.name}』移入回收站吗`,
+        width: 576
       })
     },
     moveBin(payload) {
@@ -312,6 +314,9 @@ export default {
     },
     handlePreview(payload) {
       console.log(payload)
+    },
+    handleShare(payload) {
+      this.$refs.fileSharerRef?.open(payload)
     }
   },
   computed: {

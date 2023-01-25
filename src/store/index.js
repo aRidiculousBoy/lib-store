@@ -6,6 +6,7 @@ import permission from './modules/permission'
 import user from './modules/user'
 import file from './modules/file'
 import bin from './modules/bin'
+import share from './modules/share'
 
 
 Vue.use(Vuex);
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     permission,
     user,
     file,
-    bin
+    bin,
+    share
   },
 });

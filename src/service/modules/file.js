@@ -15,7 +15,8 @@ const FILEAPI = {
   CreateFolderAPI: prefix + '/user/resource/folder/',
   CancelUploadAPI: prefix + '/user/undo/resource/',
   RecoverFileAPI: prefix + '/user/resource/file/rc/',
-  RecoverFolderAPI: prefix + '/user/resource/folder/rc/'
+  RecoverFolderAPI: prefix + '/user/resource/folder/rc/',
+  CreateShareAPI: prefix + '/user/resource/share/'
 }
 
 // 获取用户文件列表
@@ -113,6 +114,15 @@ export const recoverFolderRequest = (payload) => {
     url: FILEAPI.RecoverFolderAPI + payload.id
   })
 }
+
+// 创建分享资源
+export const createShareRequest = (payload) => {
+  return request.post({
+    url: FILEAPI.CreateShareAPI,
+    data: payload
+  })
+}
+
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -125,5 +135,6 @@ export default {
   createFolderRequest,
   cancelUploadRequest,
   recoverFileRequest,
-  recoverFolderRequest
+  recoverFolderRequest,
+  createShareRequest
 }

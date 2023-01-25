@@ -13,6 +13,7 @@
     "ant-design-vue": "^1.7.6",
     "axios": "^1.1.3",
     "core-js": "^3.6.5",
+    "dayjs": "^1.11.7",
     "echarts": "^5.4.0",
     "file-saver": "^2.0.5",
     "hash-wasm": "^4.9.0",

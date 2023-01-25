@@ -52,6 +52,10 @@ const file = {
     async recoverFolder(context, payload) {
       const response = fileService.recoverFolderRequest(payload)
       return response
+    },
+    async createShare(context, payload) {
+      const response = fileService.createShareRequest(payload)
+      return response
     }
   }
 }
