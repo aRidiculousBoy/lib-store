@@ -37,7 +37,7 @@
           <a-icon type="smile" theme="twoTone" />
         </template>
         <template #extra>
-          <a-button type="primary">
+          <a-button type="primary" v-copy="{ text: link, callback:copyCallback }">
             复制分享链接
           </a-button>
         </template>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { copy } from '@/directives'
 
 export default {
   name: 'file-sharer',
@@ -83,7 +84,8 @@ export default {
         ]
       },
       loading: false,
-      success: false
+      success: false,
+      link: undefined
     }
   },
   methods: {
@@ -91,7 +93,7 @@ export default {
       this.form.type = file.type === 'folder' ? 0 : 1
       this.form.originalName = file.name
       this.form.userResourceId = file.id
-        
+
       this.callback = callback
       this.visible = true
     },
@@ -103,6 +105,7 @@ export default {
       this.$refs.modelRef?.validate(valid => {
         if (valid) {
           this.$store.dispatch('file/createShare', this.form).then(response => {
+            this.link = window.location.host + '/share-details/' + response
             this.callback && this.callback()
             this.loading = false
             this.success = true
@@ -113,12 +116,18 @@ export default {
     handleAfterClose() {
       this.success = false
       this.form.fetchCode = undefined
+    },
+    copyCallback() {
+      this.$message.success('复制成功，快将该资源分享给你的小伙伴吧')
     }
   },
   filters: {
     dayFilter(day) {
       return day * 60 * 24
     }
+  },
+  directives: {
+    copy
   }
 }
 </script>

@@ -14,7 +14,7 @@ const apiPaths = {
 export const baseURL = apiPaths[appMode]
 
 // 白名单列表
-export const whiteList = ['/login']
+export const whiteList = ['/login','/share-details']
 
 export default {
   appMode,

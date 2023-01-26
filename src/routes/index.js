@@ -6,6 +6,8 @@ const Analysis = () => import('@views/dashboard/analysis')
 // 登录组件
 const Login = () => import('@/views/login')
 
+const ShareDetails = () => import('@views/share-details')
+
 // 异常页组件
 const UnAuthorization = () => import('@views/exception/403')
 const NotFound = () => import('@/views/exception/404')
@@ -41,6 +43,10 @@ const Album = () => import('@views/album')
 const Favor = () => import('@views/favor')
 const Share = () => import('@views/share')
 const Bin = () => import('@views/bin')
+
+
+
+
 
 // 空布局组件 主要用于给二级路由占位
 const RouteView = {
@@ -119,6 +125,20 @@ export const constantRouterMap = [
     name: 'Login',
     path: '/login',
     component: Login
+  },
+  {
+    name: 'ShareDetails',
+    path: '/share-details',
+    component: RouteView,
+    children: [
+      {
+        path: '/share-details/:shareName',
+        component: ShareDetails,
+        meta: {
+          notRequireLogin: true
+        }
+      }
+    ]
   },
   {
     path: '/file-list',

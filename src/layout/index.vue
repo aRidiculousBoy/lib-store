@@ -2,7 +2,10 @@
   <div class="page-layout">
     <a-layout id="components-layout-demo-custom-trigger">
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible :width="240">
-        <div class="logo" />
+        <div class="logo"> 
+          <span class="app-name" title="Lib Cloud">Lib Cloud</span>
+        </div>
+
         <sidebar :collapsed="collapsed" />
       </a-layout-sider>
       <a-layout>
@@ -34,7 +37,7 @@
           margin: '24px 16px',
           padding: '24px',
           minHeight: '280px',
-          backgroundColor:  '#fff',
+          backgroundColor: '#fff',
           borderTop: '1px solid #e9e9e9'
         }">
           <router-view></router-view>
@@ -108,9 +111,11 @@ export default {
 }
 
 #components-layout-demo-custom-trigger .logo {
-  height: 32px;
+  height: 36px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+  text-align: center;
+  overflow: hidden;
 }
 
 .ant-layout-header {
@@ -138,5 +143,12 @@ export default {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.app-name {
+  font-size: 24px;
+  color: #fff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

@@ -1,29 +1,16 @@
 <template>
   <div class="share-page">
     <a-card class="searcher">
-      <a-form-model ref="searcher" v-model="searcher" :layout="layout" v-bind="formItemLayout">
-        <a-form-model-item label="分享名称">
+      <a-form-model ref="searcher" :model="searcher" :layout="layout" v-bind="formItemLayout">
+        <a-form-model-item label="分享名称" prop="name">
           <a-input v-model="searcher.name" placeholder="按分享名称查询" />
-        </a-form-model-item>
-        <a-form-model-item label="是否有效">
-          <a-select v-model="searcher.isValid" :style="{ width: '176px' }" placeholder="按是否失效查询">
-            <a-select-option value="undefined">
-              全部
-            </a-select-option>
-            <a-select-option value="true">
-              未失效
-            </a-select-option>
-            <a-select-option value="false">
-              已失效
-            </a-select-option>
-          </a-select>
         </a-form-model-item>
         <a-form-model-item :wrapper-col="buttonItemLayout.wrapperCol">
           <a-space>
-            <a-button>
+            <a-button @click="handleReset">
               重置
             </a-button>
-            <a-button type="primary">
+            <a-button type="primary" @click="getShareResource">
               查询
             </a-button>
           </a-space>
@@ -33,28 +20,26 @@
     <a-card class="content">
       <div slot="title" class="action">
         <span>全部文件</span>
-        <a-button>取消分享</a-button>
+        <a-button :disabled="!list.selectedRowKeys.length" @click="handleUnShare(list.selectedRowKeys)">取消分享</a-button>
       </div>
 
-      <a-table :columns="list.columns" :data-source="list.data" rowKey="userResourceId" bordered
-        :pagination="false"
+      <a-table :columns="list.columns" :data-source="list.data" rowKey="shareName" bordered :pagination="false"
         :row-selection="{ selectedRowKeys: list.selectedRowKeys, onChange: onSelectChange, getCheckboxProps: list.getCheckboxProps }"
         :loading="list.loading">
-        <a slot="originalName" slot-scope="name">{{ name | nameFilter }}</a>
+        <span slot="originalName" slot-scope="name">{{ name | nameFilter }}</span>
         <span slot="createTime" slot-scope="createTime"> {{ createTime | dateFormat }}</span>
         <span slot="survivalTime" slot-scope="survivalTime">{{ survivalTime | timeLengthFormat}}</span>
         <span slot="valid" slot-scope="valid">
           <a-badge v-if="valid" status="success" text="未失效" />
           <a-badge v-else status="error" text="已失效" />
         </span>
-        <a-space slot="action">
-          <a>复制链接</a>
+        <a-space slot="action" slot-scope="record">
+          <a v-copy="{ text: prefix + '/share-details/' + record.shareName, callback: copyCallback }">复制链接</a>
           <a-divider type="vertical" />
-          <a-popconfirm ok-text="确定" cancel-text="取消" @confirm="handleUnShare">
+          <a-popconfirm ok-text="确定" cancel-text="取消" @confirm="handleUnShare(record)" okType="danger">
             <div slot="title">
               取消分享后，该条分享记录将被删除，
               好友将无法再访问此分享链接。
-              <br />
               您确认要取消分享吗？
             </div>
             <a>取消分享</a>
@@ -68,6 +53,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import { copy } from '@/directives'
 
 export default {
   name: 'share',
@@ -75,8 +61,8 @@ export default {
     return {
       layout: 'inline',
       searcher: {
-        name: undefined,
-        isVaild: undefined
+        name: '',
+        type: 2
       },
       list: {
         loading: false,
@@ -123,8 +109,8 @@ export default {
           }
           return record
         }
-      }
-
+      },
+      prefix: window.location.host
     }
   },
   created() {
@@ -148,14 +134,44 @@ export default {
       this.list.loading = true
       this.$store.dispatch('share/getShareResource', this.searcher).then((response) => {
         this.list.data = response
+      }).catch(() => {
+
+      }).finally(() => {
         this.list.loading = false
       })
     },
     onSelectChange(selectedRowKeys) {
-      console.log(selectedRowKeys)
       this.list.selectedRowKeys = selectedRowKeys
     },
-    handleUnShare() { }
+    handleUnShare(records) {
+      const isArray = Array.isArray(records)
+      if (isArray) {
+        const payload = {
+          shareNames: records
+        }
+        this.$store.dispatch('share/unShareResourceBatch', payload).then(response => {
+          this.$message.success('取消外链分享成功')
+          this.getShareResource()
+        })
+      }
+      else {
+        const { shareName } = records
+        const payload = {
+          shareName
+        }
+        this.$store.dispatch('share/unShareResource', payload).then((response) => {
+          this.$message.success('取消外链分享成功')
+          this.getShareResource()
+        })
+      }
+    },
+    handleReset() {
+      this.$refs.searcher?.resetFields()
+      this.getShareResource()
+    },
+    copyCallback() {
+      this.$message.success('复制成功，快将该资源分享给你的小伙伴吧')
+    }
   },
   computed: {
     formItemLayout() {
@@ -175,6 +191,9 @@ export default {
         }
         : {};
     }
+  },
+  directives: {
+    copy
   }
 }
 </script>

@@ -40,7 +40,7 @@ router.beforeEach((to, from, next) => {
   }
   // 未登录
   else {
-    if (configs.whiteList.includes(to.path)) {
+    if (configs.whiteList.includes(to.path) || to.meta.notRequireLogin) {
       next()
     } 
     // 反之重定向到登录页面
