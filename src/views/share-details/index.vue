@@ -4,7 +4,7 @@
       <a-layout-header class="header">
         <div class="view">
           <div class="logo" />
-          <span class="app-title">Lib Cloud</span>
+          <span class="app-title">{{ appTitle }}</span>
         </div>
         <a-avatar :src="kenanJpg" :size="44"></a-avatar>
       </a-layout-header>
@@ -48,15 +48,17 @@
 
 <script>
 import kenanJpg from '@/assets/images/kenan.jpg'
+import { appTitle } from '@/constants'
 
 export default {
   name: 'share-details',
   data() {
     return {
+      list: [],
       loading: false,
       error: false,
-      list: [],
-      kenanJpg
+      kenanJpg,
+      appTitle
     }
   },
   methods: {

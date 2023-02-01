@@ -29,7 +29,7 @@
           </a-col>
         </a-row>
       </div>
-      <a-empty v-else :image="simpleImage" description="当前文件夹没有任何文件^_^" />
+      <a-empty v-else :image="simpleImage" description="当前文件夹没有任何文件" />
     </a-spin>
     <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin" />
     <file-namer ref="fileNamerRef" />
@@ -42,6 +42,7 @@
         @cancelAllUpload="handleCancelAllUpload" />
     </transition>
     <file-sharer ref="fileSharerRef" />
+    <video ref="videoRef"></video>
   </div>
 </template>
 
@@ -68,6 +69,7 @@ export default {
   data() {
     // 文件分块上传成功的回调
     const successCallback = (response, fileContext) => {
+      console.log(response.allSuccess)
       if (response.allSuccess) {
         fileContext.isFinished = true
         fileContext.isUploading = false
@@ -309,11 +311,11 @@ export default {
     handleContinueAllUpload() {
       const pendingFiles = this.uploadingList.filter(file => !file.isFinished && !file.isUploading)
       for (const pendingFile of pendingFiles) {
-        this.handleContinueUpload(pendingFile)
+        this.handleContinueUpload(pendingFile)  
       }
     },
     handlePreview(payload) {
-      console.log(payload)
+      this.$refs.videoRef.setAttribute('src',`/api/user/resource/file/${payload.id}`)
     },
     handleShare(payload) {
       this.$refs.fileSharerRef?.open(payload)

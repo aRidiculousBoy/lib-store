@@ -37,9 +37,13 @@
           <a-icon type="smile" theme="twoTone" />
         </template>
         <template #extra>
-          <a-button type="primary" v-copy="{ text: link, callback:copyCallback }">
-            复制分享链接
-          </a-button>
+          <a-space>
+            <a-button type="primary" v-copy="{ text: link, callback: copyCallback }">
+              复制分享链接
+            </a-button>
+            <a-button @click="handleToSharePage">跳转到分享页</a-button>
+          </a-space>
+
         </template>
       </a-result>
     </a-modal>
@@ -119,6 +123,9 @@ export default {
     },
     copyCallback() {
       this.$message.success('复制成功，快将该资源分享给你的小伙伴吧')
+    },
+    handleToSharePage() {
+      this.$router.push('/share')
     }
   },
   filters: {

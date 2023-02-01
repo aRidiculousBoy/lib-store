@@ -135,7 +135,8 @@ export const constantRouterMap = [
         path: '/share-details/:shareName',
         component: ShareDetails,
         meta: {
-          notRequireLogin: true
+          notRequireLogin: true,
+          module: '文件分享'
         }
       }
     ]
@@ -143,7 +144,7 @@ export const constantRouterMap = [
   {
     path: '/file-list',
     component: Layout,
-    redirect: '/file-list',
+    redirect: '/file-list/0',
     meta: {
       title: '文件',
       hasSubMenu: false,
@@ -152,15 +153,11 @@ export const constantRouterMap = [
     children: [
       {
         name: 'FileList',
-        path: '/file-list',
-        component: RouteView,
-        redirect: '/file-list/0',
-        children: [
-          {
-            path: '/file-list/:parentId',
-            component: FileList
-          }
-        ]
+        path: '/file-list/:parentId',
+        component: FileList,
+        meta: {
+          module: '文件'
+        }
       }
     ]
   },
@@ -177,7 +174,10 @@ export const constantRouterMap = [
     children: [
       {
         path: '/album',
-        component: Album
+        component: Album,
+        meta: {
+          module: '相册'
+        }
       }
     ]
   },
@@ -194,7 +194,10 @@ export const constantRouterMap = [
     children: [
       {
         path: '/favor',
-        component: Favor
+        component: Favor,
+        meta: {
+          module: '收藏'
+        }
       }
     ]
   },
@@ -211,7 +214,10 @@ export const constantRouterMap = [
     children: [
       {
         path: '/share',
-        component: Share
+        component: Share,
+        meta: {
+          module: '分享'
+        }
       }
     ]
   },
@@ -228,7 +234,10 @@ export const constantRouterMap = [
     children: [
       {
         path: '/recycle-bin',
-        component: Bin
+        component: Bin,
+        meta: {
+          module: '回收站'
+        }
       }
     ]
   },

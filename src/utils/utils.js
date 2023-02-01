@@ -54,3 +54,9 @@ export function uuid() {
   var uuid = s.join("");
   return uuid;
 }
+
+
+// 设置网页标题
+export function setPageTitle(title) {
+  document.title = title
+}

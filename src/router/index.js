@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import routes from '@/routes'
 import configs from '@/configs'
 import authorization from '@/utils/authorization'
+import { appTitle } from '@/constants'
+import { setPageTitle } from '@/utils/utils'
 
 Vue.use(VueRouter)
 
@@ -50,4 +52,9 @@ router.beforeEach((to, from, next) => {
   }
 
 })
+
+router.afterEach((to, from) => {
+  setPageTitle(appTitle + ' - ' + to.meta.module)
+})
+
 export default router

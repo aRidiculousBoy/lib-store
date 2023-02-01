@@ -3,7 +3,7 @@
     <a-layout id="components-layout-demo-custom-trigger">
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible :width="240">
         <div class="logo"> 
-          <span class="app-name" title="Lib Cloud">Lib Cloud</span>
+          <span class="app-name" :title="appTitle">{{ appTitle }}</span>
         </div>
 
         <sidebar :collapsed="collapsed" />
@@ -52,6 +52,7 @@ import Sidebar from './sidebar.vue'
 import Breadcrumbs from './breadcrumbs.vue'
 import { mapState } from 'vuex'
 import kenan from '@assets/images/kenan.jpg'
+import { appTitle } from '@/constants'
 
 export default {
   name: 'Layout',
@@ -68,7 +69,8 @@ export default {
   data() {
     return {
       collapsed: false,
-      kenan
+      kenan,
+      appTitle
     }
   },
   methods: {

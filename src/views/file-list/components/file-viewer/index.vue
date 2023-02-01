@@ -2,12 +2,7 @@
   <div class="file-viewer">
     <a-modal v-model="visible" :footer="null" :width="608" :title="file.name + ' - 详细信息'">
       <a-descriptions bordered :column="6">
-        <a-descriptions-item label="ID" :span="6">
-          <router-link :to="isFolder ? `/file-list/${file.id}` : `${$route.path}`"
-            v-copy="{ text: file.id, callback: copyCallback }">{{ file.id }}</router-link>
-          <a-icon type="copy" v-copy="{ text: file.id, callback: copyCallback }"
-            :style="{ verticalAlign: 'top', marginLeft: '4px', cursor: 'pointer', transform: 'scale(0.92)' }" />
-        </a-descriptions-item>
+     
         <a-descriptions-item label="文件名称" :span="6">
           <div :title="file.name" class="file-name">
             {{ file.name }}
@@ -15,7 +10,7 @@
               :style="{ verticalAlign: 'top', marginLeft: '2px', cursor: 'pointer', transform: 'scale(0.92)' }" />
           </div>
         </a-descriptions-item>
-        <a-descriptions-item label="文件类型" :span="4">
+        <a-descriptions-item label="文件类型" :span="6">
           {{ file.type | typeFilter }}
         </a-descriptions-item>
         <a-descriptions-item label="文件大小" :span="2">
@@ -28,7 +23,7 @@
           <a-badge v-if="file.share" status="success" text="分享中" />
           <a-badge v-else status="default" text="未分享" />
         </a-descriptions-item>
-        <a-descriptions-item label="创建日期" :span="6">
+        <a-descriptions-item label="创建日期" :span="4">
           {{ file.createTime }}
         </a-descriptions-item>
         <a-descriptions-item label="操作" :span="6">

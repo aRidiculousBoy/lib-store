@@ -11,7 +11,7 @@
           </div>
           <div class="bar">
             <div class="text" :title="task.filename">{{ task.filename }}</div>
-            <a-progress :percent="task.percentage" :showInfo="false" :status="task.isUploading ? 'active' : 'normal'" />
+            <a-progress :percent="task.percentage" :showInfo="false" :status="task.isFinished ? 'success' : 'normal'" />
           </div>
           <div class="action" v-if="!task.isFinished">
             <a-space>
@@ -35,6 +35,7 @@
               </a-tooltip>
             </a-space>
           </div>
+          <div v-else>上传完成</div>
         </div>
         <template slot="extra">
           <a-space v-if="isCancelable" class="more-action">

@@ -9,7 +9,7 @@
           </a-col>
         </a-row>
       </div>
-      <a-empty v-else description="当前文件夹没有任何文件^_^" />
+      <a-empty v-else description="当前文件夹没有任何文件" />
     </a-spin>
     <bin-file-viewer ref="binFileViewerRef" @recover="handleRecover" @delete="handleDelete"></bin-file-viewer>
     <file-remover ref="fileRemoverRef"></file-remover>
