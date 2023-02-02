@@ -6,7 +6,7 @@
       <div class="folder-cover">
         <img :src="folderSvg" />
       </div>
-      <a-input v-model="name"></a-input>
+      <a-input v-model="name" ref="inputRef"></a-input>
     </a-modal>
   </div>
 </template>
@@ -27,6 +27,10 @@ export default {
   methods: {
     open(callback) {
       this.visible = true
+      this.name = undefined
+      this.$nextTick(() => {
+        this.$refs.inputRef?.focus()
+      })
       this.callback = callback
     },
     close() {

@@ -10,6 +10,7 @@
         </a-tooltip>
         <uploader @uploadFile="handleUploadFile" @createFolder="onCreateFolderClick" />
       </div>
+      <file-breadcrumb :items="routeStack" separator=">" :prefix="{ id: 0, name: '文件' }" />
       <div class="left">
         <a-radio>共{{ size }}项</a-radio>
         <a-tooltip>
@@ -42,7 +43,6 @@
         @cancelAllUpload="handleCancelAllUpload" />
     </transition>
     <file-sharer ref="fileSharerRef" />
-    <video ref="videoRef"></video>
   </div>
 </template>
 
@@ -54,6 +54,7 @@ import Uploader from './components/uploader'
 import CreateFolder from './components/create-folder'
 import ProgressViewer from './components/progress-viewer'
 import FileSharer from './components/file-sharer'
+import FileBreadcrumb from './components/breadcrumb'
 
 import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
@@ -88,7 +89,8 @@ export default {
       successCallback,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       Size,
-      loading: false
+      loading: false,
+      routeStack: []
     }
   },
   components: {
@@ -98,7 +100,8 @@ export default {
     Uploader,
     CreateFolder,
     ProgressViewer,
-    FileSharer
+    FileSharer,
+    FileBreadcrumb
   },
   methods: {
     async getPageData(parentId) {
@@ -118,7 +121,7 @@ export default {
       const { type, id } = payload
       if (type === 'folder') {
         this.$router.push({
-          path: `/file-list/${id}`,
+          path: `/file-list/${id}`
         })
       } else {
         this.handlePreview(payload)
@@ -311,14 +314,43 @@ export default {
     handleContinueAllUpload() {
       const pendingFiles = this.uploadingList.filter(file => !file.isFinished && !file.isUploading)
       for (const pendingFile of pendingFiles) {
-        this.handleContinueUpload(pendingFile)  
+        this.handleContinueUpload(pendingFile)
       }
     },
     handlePreview(payload) {
-      this.$refs.videoRef.setAttribute('src',`/api/user/resource/file/${payload.id}`)
+      console.log('预览逻辑实现')
     },
     handleShare(payload) {
       this.$refs.fileSharerRef?.open(payload)
+    },
+    getFolderPath() {
+      const { parentId } = this.$route.params
+      const payload = {
+        parentId
+      }
+      // 特殊情况处理 根文件夹 需要触发面包屑导航的更新
+      if (parentId === '0') {
+        this.routeStack = []
+      }
+      else {
+        this.$store.dispatch('file/getFolderPath', payload).then(response => {
+          this.processRelations(response)
+        })
+      }
+    },
+    // 对文件夹返回的路径关系进行解析
+    processRelations(relation) {
+      const stack = []
+      let bottomLevel = relation
+      while (bottomLevel) {
+        const el = {
+          name: bottomLevel.name,
+          id: bottomLevel.id
+        }
+        stack.unshift(el)
+        bottomLevel = bottomLevel.parent
+      }
+      this.routeStack = stack
     }
   },
   computed: {
@@ -358,6 +390,7 @@ export default {
       handler(params) {
         const { parentId } = params
         this.getPageData(parentId)
+        this.getFolderPath()
       }
     }
   }

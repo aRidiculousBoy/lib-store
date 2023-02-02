@@ -54,6 +54,8 @@ import { mapState } from 'vuex'
 import kenan from '@assets/images/kenan.jpg'
 import { appTitle } from '@/constants'
 
+
+
 export default {
   name: 'Layout',
   components: {
@@ -63,7 +65,7 @@ export default {
   provide() {
     return {
       navigateToHome: this.navigateToHome,
-      collapsed: () => this.collapsed
+      collapsed: () => this.collapsed,
     }
   },
   data() {

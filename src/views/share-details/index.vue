@@ -17,7 +17,9 @@
                 <a-button type="primary">全部保存到我的云盘</a-button>
               </div>
               <a-divider></a-divider>
-              <div class="list">列表</div>
+              <div class="list">
+                <file v-for="file in useFileList" :key="file.shareName" v-bind="file"/>
+              </div>
             </a-card>
             <a-card style="flex: 1">
               <span>分享人</span>
@@ -49,9 +51,14 @@
 <script>
 import kenanJpg from '@/assets/images/kenan.jpg'
 import { appTitle } from '@/constants'
+import { useListeners } from 'vue'
+import File from './components/file'
 
 export default {
   name: 'share-details',
+  components: {
+    File
+  },
   data() {
     return {
       list: [],
@@ -83,6 +90,18 @@ export default {
       handler(value) {
         this.getShareResource(value)
       }
+    }
+  },
+  computed: {
+    useFileList() {
+      return this.list.map(file => {
+        return {
+          originalName: file.originalName,
+          shareName: file.shareName,
+          type: file.type === 1 ? 'file' : 'folder',
+          extension: file.type === 1 ? '.mp4' : 'folder'
+        }
+      })
     }
   }
 }

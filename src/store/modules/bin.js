@@ -5,7 +5,7 @@ const bin = {
   state: {},
   actions: {
     async getBinFile(context, payload) {
-      const response = binService.getBinFileRequest()
+      const response = await binService.getBinFileRequest()
       return response
     }
   },

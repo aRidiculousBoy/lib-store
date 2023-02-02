@@ -79,28 +79,12 @@
 </template>
 
 <script>
-import folderSvg from '@/assets/svg/folder.svg'
-import jpgSvg from '@/assets/svg/jpg.svg'
-import mp3Svg from '@/assets/svg/mp3.svg'
-import mp4Svg from '@/assets/svg/mp4.svg'
-import pdfSvg from '@/assets/svg/pdf.svg'
-import pngSvg from '@/assets/svg/png.svg'
-
 import refreshSvg from '@/assets/svg/refresh.svg'
 import pauseSvg from '@/assets/svg/pause.svg'
 import closeSvg from '@/assets/svg/close.svg'
 
 
 
-
-const typeMapper = {
-  'folder': folderSvg,
-  '.jpg': jpgSvg,
-  '.mp3': mp3Svg,
-  '.mp4': mp4Svg,
-  '.pdf': pdfSvg,
-  '.png': pngSvg
-}
 
 
 export default {
@@ -111,9 +95,9 @@ export default {
       default: () => ([])
     }
   },
+  inject: ['typeMapper'],
   data() {
     return {
-      typeMapper,
       refreshSvg,
       pauseSvg,
       closeSvg,

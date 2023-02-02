@@ -16,7 +16,8 @@ const FILEAPI = {
   CancelUploadAPI: prefix + '/user/undo/resource/',
   RecoverFileAPI: prefix + '/user/resource/file/rc/',
   RecoverFolderAPI: prefix + '/user/resource/folder/rc/',
-  CreateShareAPI: prefix + '/user/resource/share/'
+  CreateShareAPI: prefix + '/user/resource/share/',
+  GetFolderPathAPI: prefix + '/user/resource/location/'
 }
 
 // 获取用户文件列表
@@ -123,6 +124,13 @@ export const createShareRequest = (payload) => {
   })
 }
 
+// 获取文件夹路径
+export const getFolderPathRequest = (payload) => {
+  return request.get({
+    url: FILEAPI.GetFolderPathAPI + payload.parentId
+  })
+}
+
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -136,5 +144,6 @@ export default {
   cancelUploadRequest,
   recoverFileRequest,
   recoverFolderRequest,
-  createShareRequest
+  createShareRequest,
+  getFolderPathRequest
 }

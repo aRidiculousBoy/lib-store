@@ -2,9 +2,6 @@
   <div class="bin-file-viewer">
     <a-modal v-model="visible" :footer="null" :width="608">
       <a-descriptions bordered :column="6">
-        <a-descriptions-item label="ID" :span="6">
-          {{ file.id }}
-        </a-descriptions-item>
         <a-descriptions-item label="文件名称" :span="6">
           <div :title="file.name" class="file-name">
             {{ file.name }}
@@ -76,6 +73,13 @@ export default {
 <style scoped lang="less">
 .title {
   width: 92%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-name {
+  width: 360px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
