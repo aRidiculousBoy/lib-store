@@ -1,4 +1,3 @@
-import axios from 'axios'
 import userService from '@service/modules/user'
 
 const user = {
@@ -36,6 +35,14 @@ const user = {
     },
     async appLogout(context, payload) {
       context.commit('clearToken')
+    },
+    async appRegister(context, payload) {
+      const response = await userService.appRegisterRequest(payload)
+      return response
+    },
+    async checkUserIsExist(context,payload) {
+      const response = await userService.checkUserExistRequest(payload)
+      return response
     }
   }
 }

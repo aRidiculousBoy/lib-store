@@ -7,7 +7,7 @@
 const webConfigs = {
   // 应用 可以为多个（例如微前端应用）
   apps: {
-    netdisk: {
+    'lib-store': {
       baseUrl: '/api',
       color: {
         

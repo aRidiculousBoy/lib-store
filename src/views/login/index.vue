@@ -3,7 +3,7 @@
     <div class="forms-container">
       <div class="signin-signup">
         <form action="#" class="sign-in-form">
-          <h2 class="title">Netdisk</h2>
+          <h2 class="title">Lib-Store</h2>
           <div class="input-field">
             <i class="fas fa-user"></i><input type="text" placeholder="用户名" v-model="loginForm.username" />
           </div>
@@ -11,7 +11,7 @@
             <i class="fas fa-lock"></i><input type="password" placeholder="密码" v-model="loginForm.password" />
           </div>
           <input type="submit" value="登录" class="btn solid" @click.prevent="handleLogin" />
-          <p class="social-text">或者使用第三方账号登录</p>
+          <p class="social-text">第三方账户登录</p>
           <div class="social-media">
             <a-tooltip overlayClassName="overlay">
               <template slot="title">
@@ -40,18 +40,15 @@
           </div>
         </form>
         <form action="#" class="sign-up-form">
-          <h2 class="title">Netdisk</h2>
+          <h2 class="title">Lib-Store</h2>
           <div class="input-field">
-            <i class="fas fa-user"></i><input type="text" placeholder="用户名" v-model="registerForm.username" />
-          </div>
-          <div class="input-field">
-            <i class="fas fa-envelope"></i><input type="email" placeholder="Email" v-model="registerForm.email" />
+            <i class="fas fa-user"></i><input type="text" placeholder="用户名" v-model="registerForm.username" ref="inputRef"/>
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i><input type="password" placeholder="密码" v-model="registerForm.password" />
           </div>
           <input type="submit" class="btn" value="注册" @click.prevent="handleRegister" />
-          <p class="social-text">或者使用第三方账号登录</p>
+          <p class="social-text">第三方账户登录</p>
           <div class="social-media">
             <a-tooltip overlayClassName="overlay">
               <template slot="title">
@@ -86,7 +83,7 @@
         <div class="content">
           <h3 style="color:#fff">欢迎回来</h3>
           <p>
-            Netdisk是一款纯净、简洁的云存储系统。在这里，您可以轻松、无障碍的使用它来管理你的文件资产。
+            Lib-Store是一款纯净、简洁的存储系统。在这里，您可以轻松、无障碍的使用它来管理你的文件资产。
           </p>
           <button class="btn transparent" id="sign-up-btn">注册</button>
         </div>
@@ -94,7 +91,7 @@
       </div>
       <div class="panel right-panel">
         <div class="content">
-          <h3 style="color:#fff">欢迎加入</h3>
+          <h3 style="color:#fff">欢迎加入 Lib-Store</h3>
           <p>
           </p>
           <button class="btn transparent" id="sign-in-btn">登录</button>
@@ -122,8 +119,8 @@ export default {
       registerForm: {
         username: undefined,
         password: undefined,
-        email: undefined
-      }
+      },
+      userIsExist: false
     }
   },
   methods: {
@@ -135,12 +132,12 @@ export default {
 
       if (!isValid) {
         return this.$notification.error({
-          message: '校验失败,请重新填写信息',
+          message: '校验失败,请重新填写登录信息',
           description: '用户名和密码不能为空',
           duration: 1
         })
       }
-      
+
       store.dispatch('user/appLogin', this.loginForm).
         then(data => {
           this.$notification.success({
@@ -155,13 +152,62 @@ export default {
         ).
         catch()
     },
-    handleRegister() {
-      console.log('register')
-    }
+    async handleRegister() {
+      const isValid =
+        this.registerForm.username !== undefined && this.registerForm.username?.trim() !== ''
+        &&
+        this.registerForm.password !== undefined && this.registerForm.password?.trim() !== ''
+
+      if (!isValid) {
+        return this.$notification.error({
+          message: '校验失败,请重新填写注册信息',
+          description: '用户名和密码不能为空',
+          duration: 1
+        })
+      }
+
+      const { username, password } = this.registerForm
+      const payload = {
+        userName: username,
+        password
+      }
+      const userIsExist = await this.$store.dispatch('user/checkUserIsExist', {
+        userName: username
+      })
+
+      this.userIsExist = userIsExist
+      if (!userIsExist) {
+        this.$store.dispatch('user/appRegister', payload).then(response => {
+          this.$notification.success({
+            message: '注册成功',
+            description: '欢迎成为Lib Store的一员'
+          })
+        })
+      }
+      else {
+        this.registerForm.username = undefined
+        this.$notification.error({
+          message: '校验失败,请重新填写注册信息',
+          description: '该用户名已被注册，请重新输入用户名',
+          duration: 1
+        })
+        this.$refs.inputRef.focus()
+      }
+    },
   }
 }
 </script>
 
 <style scoped src="./static/css/style.css">
 
+</style>
+<style>
+.input-field {
+  margin: 16px !important;
+}
+
+.register-username-error {
+  text-align: left;
+  padding: 2px 0;
+}
 </style>

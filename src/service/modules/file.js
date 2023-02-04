@@ -46,7 +46,7 @@ export const uploadChunkRequest = (payload) => {
 
 // 文件下载
 export const downloadFileRequest = (payload) => {
-  saveAs(FILEAPI.DownloadFileAPI + payload.id);
+  saveAs(FILEAPI.DownloadFileAPI + `${payload.type === 'folder' ? 0 : 1}/${payload.id}`,payload.name);
 }
 
 // 文件重命名

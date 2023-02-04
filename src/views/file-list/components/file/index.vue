@@ -147,7 +147,8 @@ export default {
     handleDownLoad() {
       const payload = {
         type: this.type,
-        id: this.id
+        id: this.id,
+        name: this.name + this.extension
       }
       this.$emit('download', payload)
     },

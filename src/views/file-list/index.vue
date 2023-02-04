@@ -23,10 +23,13 @@
     </div>
     <a-spin tip="加载中..." :spinning="loading">
       <div class="main-list" v-if="fileList.length">
-        <a-row :gutter="[4, 16]" v-for="row in rowLength">
-          <a-col :span="3" v-for="file in fileList.slice((row - 1) * 8, row * 8)">
+        <a-row :gutter="[4, 16]" v-for="row in rowLength" :key="row">
+          <a-col :span="3" v-for="file in fileList.slice((row - 1) * 8, row * 8)" :key="row">
             <file v-bind="file" @view="handleViewFile" @click="handleFileClick" @rename="handleRename"
-              @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview" @share="handleShare"></file>
+              @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview" @share="handleShare"
+              @dragstart.native="handleDragStart(file, $event)" @dragover.native="handleDragOver(file, $event)"
+              @drop.native="handleDrop(file, $event)" @dragleave.native="handleDragLeave(file)"
+              :class="{ 'high-light': file.id === activeId }" />
           </a-col>
         </a-row>
       </div>
@@ -90,7 +93,8 @@ export default {
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       Size,
       loading: false,
-      routeStack: []
+      routeStack: [],
+      activeId: undefined
     }
   },
   components: {
@@ -258,9 +262,7 @@ export default {
         })
       }
       else {
-        this.$store.dispatch('file/downloadFile', {
-          id: payload.id
-        })
+        this.$store.dispatch('file/downloadFile', payload)
       }
     },
     handlePauseUpload(task) {
@@ -351,6 +353,58 @@ export default {
         bottomLevel = bottomLevel.parent
       }
       this.routeStack = stack
+    },
+    // 拖拽相关
+    handleDragStart(file, e) {
+      const { id, type, name } = file
+      e.dataTransfer.setData('sourceId', id)
+      e.dataTransfer.setData('type', type)
+      e.dataTransfer.setData('name', name)
+    },
+    handleDragOver(file, e) {
+      e.preventDefault();
+      if (file.type === 'folder') {
+        this.activeId = file.id
+      }
+    },
+    handleDragLeave(file) {
+      this.activeId = undefined
+    },
+    handleDrop(file, e) {
+      this.activeId = undefined
+
+      const targetType = file.type
+      const targetIsFolder = targetType === 'folder'
+      // 如果目标类型为文件夹才能够进行移动操作
+      if (targetIsFolder) {
+        const id = e.dataTransfer.getData('sourceId')
+        const type = e.dataTransfer.getData('type')
+        const name = e.dataTransfer.getData('name')
+        const parentId = file.id
+        // 根据源文件类型调用不同接口
+        if (type === 'folder') {
+          const payload = {
+            id,
+            name,
+            parentId
+          }
+          this.$store.dispatch('file/renameFolder', payload).then(response => {
+            const pid = this.$route.params.parentId
+            this.getPageData(pid)
+          })
+        }
+        else {
+          const payload = {
+            resourceId: id,
+            originalName: name,
+            parentId
+          }
+          this.$store.dispatch('file/renameFile', payload).then(response => {
+            const pid = this.$route.params.parentId
+            this.getPageData(pid)
+          })
+        }
+      }
     }
   },
   computed: {
@@ -431,5 +485,9 @@ export default {
 
 .main-list {
   margin-top: 24px;
+}
+
+.high-light {
+  background-color: rgba(132, 133, 141, .08);
 }
 </style>

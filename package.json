@@ -1,5 +1,5 @@
 {
-  "name": "netdisk",
+  "name": "lib-store",
   "version": "0.1.0",
   "private": true,
   "scripts": {
