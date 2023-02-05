@@ -1,6 +1,6 @@
 <template>
   <div class="file-sharer">
-    <a-modal v-model="visible" title="分享文件" :footer="null" :afterClose="handleAfterClose">
+    <a-modal v-model="visible" title="分享文件" :footer="null" :afterClose="handleAfterClose" :zIndex="9999">
       <a-spin v-if="!success" :spinning="loading" tip="生成分享链接中...">
         <a-form-model :model="form" :rules="rules" ref="modelRef">
           <a-form-model-item label="Id">

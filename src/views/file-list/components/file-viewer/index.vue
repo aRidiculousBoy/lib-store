@@ -2,7 +2,7 @@
   <div class="file-viewer">
     <a-modal v-model="visible" :footer="null" :width="608" :title="file.name + ' - 详细信息'">
       <a-descriptions bordered :column="6">
-     
+
         <a-descriptions-item label="文件名称" :span="6">
           <div :title="file.name" class="file-name">
             {{ file.name }}
@@ -31,7 +31,7 @@
             <a @click="handleDownload">下载</a>
             <a-divider type="vertical"></a-divider>
             <a v-if="file.share">取消分享</a>
-            <a v-else>分享</a>
+            <a v-else @click="handleShare">分享</a>
             <a-divider type="vertical"></a-divider>
             <a @click="handleRename">重命名</a>
             <a-divider type="vertical"></a-divider>
@@ -99,6 +99,14 @@ export default {
         type: this.file.type
       }
       this.$emit('moveBin', payload)
+    },
+    handleShare() {
+      const payload = {
+        id: this.file.id,
+        name: this.file.name,
+        type: this.file.type
+      }
+      this.$emit('share', payload)
     },
     copyCallback() {
       this.$message.success({

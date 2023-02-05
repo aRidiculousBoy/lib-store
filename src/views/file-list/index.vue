@@ -24,7 +24,7 @@
     <a-spin tip="加载中..." :spinning="loading">
       <div class="main-list" v-if="fileList.length">
         <a-row :gutter="[4, 16]" v-for="row in rowLength" :key="row">
-          <a-col :span="3" v-for="file in fileList.slice((row - 1) * 8, row * 8)" :key="row">
+          <a-col :span="3" v-for="file in fileList.slice((row - 1) * 8, row * 8)" :key="file.id">
             <file v-bind="file" @view="handleViewFile" @click="handleFileClick" @rename="handleRename"
               @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview" @share="handleShare"
               @dragstart.native="handleDragStart(file, $event)" @dragover.native="handleDragOver(file, $event)"
@@ -35,7 +35,7 @@
       </div>
       <a-empty v-else :image="simpleImage" description="当前文件夹没有任何文件" />
     </a-spin>
-    <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin" />
+    <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin" @share="handleShare"/>
     <file-namer ref="fileNamerRef" />
     <create-folder ref="createFolderRef" />
     <transition name="progress-viewer-transition" enter-active-class="animate__animated animate__fadeInRight"
@@ -256,10 +256,8 @@ export default {
     async handleDownload(payload) {
       const { type } = payload
       if (type === 'folder') {
-        this.$notification.info({
-          message: '抱歉，暂不支持文件夹下载',
-          description: '功能开发中...'
-        })
+        console.log(payload)
+        this.$store.dispatch('file/downloadFile', payload)
       }
       else {
         this.$store.dispatch('file/downloadFile', payload)
