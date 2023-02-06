@@ -89,7 +89,10 @@ export default {
           },
           {
             label: "移动",
-            customClass: 'context-menu-item'
+            customClass: 'context-menu-item',
+            onClick: () => {
+              this.handleMove()
+            }
           },
           {
             label: "查看详细信息",
@@ -157,6 +160,15 @@ export default {
         ...this.$props
       }
       this.$emit('share', payload)
+    },
+    handleMove() {
+      const { id, name, type } = this.$props
+      const payload = {
+        id,
+        name,
+        type
+      }
+      this.$emit('move', payload)
     }
   }
 }

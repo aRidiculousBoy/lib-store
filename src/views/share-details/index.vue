@@ -14,11 +14,11 @@
             <a-card style="flex: 5">
               <div class="page-header">
                 <span>面包屑</span>
-                <a-button type="primary">全部保存到我的云盘</a-button>
+                <a-button type="primary" @click="handleTransfer">全部保存到我的云盘</a-button>
               </div>
               <a-divider></a-divider>
               <div class="list">
-                <file v-for="file in useFileList" :key="file.shareName" v-bind="file"/>
+                <file v-for="file in useFileList" :key="file.shareName" v-bind="file" @transfer="handleTransfer"/>
               </div>
             </a-card>
             <a-card style="flex: 1">
@@ -43,6 +43,7 @@
             </a-result>
           </a-card>
         </a-spin>
+        <file-saver ref="fileSaverRef"/>
       </a-layout-content>
     </a-layout>
   </div>
@@ -51,13 +52,15 @@
 <script>
 import kenanJpg from '@/assets/images/kenan.jpg'
 import { appTitle } from '@/constants'
-import { useListeners } from 'vue'
+
 import File from './components/file'
+import FileSaver from './components/file-saver'
 
 export default {
   name: 'share-details',
   components: {
-    File
+    File,
+    FileSaver
   },
   data() {
     return {
@@ -82,6 +85,9 @@ export default {
       }).finally(() => {
         this.loading = false
       })
+    },
+    handleTransfer(file) {
+      this.$refs.fileSaverRef?.open(file)
     }
   },
   watch: {

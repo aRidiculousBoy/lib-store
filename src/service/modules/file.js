@@ -17,7 +17,8 @@ const FILEAPI = {
   RecoverFileAPI: prefix + '/user/resource/file/rc/',
   RecoverFolderAPI: prefix + '/user/resource/folder/rc/',
   CreateShareAPI: prefix + '/user/resource/share/',
-  GetFolderPathAPI: prefix + '/user/resource/location/'
+  GetFolderPathAPI: prefix + '/user/resource/location/',
+  TransferAPI: prefix + '/user/resource/share/transfer/'
 }
 
 // 获取用户文件列表
@@ -131,6 +132,16 @@ export const getFolderPathRequest = (payload) => {
   })
 }
 
+// 资源转存
+export const transferFileRequest = (payload) => {
+  return request.post({
+    url: FILEAPI.TransferAPI + payload.shareName,
+    params: {
+      parentId: payload.parentId
+    }
+  })
+}
+
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -145,5 +156,6 @@ export default {
   recoverFileRequest,
   recoverFolderRequest,
   createShareRequest,
-  getFolderPathRequest
+  getFolderPathRequest,
+  transferFileRequest
 }

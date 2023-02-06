@@ -60,7 +60,11 @@ const file = {
     async getFolderPath(context, payload) {
       const response = await fileService.getFolderPathRequest(payload)
       return response
-    }
+    },
+    async transferFile(context, payload) {
+      const response = await fileService.transferFileRequest(payload)
+      return response
+    },
   }
 }
 

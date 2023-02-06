@@ -28,14 +28,15 @@
             <file v-bind="file" @view="handleViewFile" @click="handleFileClick" @rename="handleRename"
               @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview" @share="handleShare"
               @dragstart.native="handleDragStart(file, $event)" @dragover.native="handleDragOver(file, $event)"
-              @drop.native="handleDrop(file, $event)" @dragleave.native="handleDragLeave(file)"
+              @drop.native="handleDrop(file, $event)" @dragleave.native="handleDragLeave(file)" @move="handleMove"
               :class="{ 'high-light': file.id === activeId }" />
           </a-col>
         </a-row>
       </div>
       <a-empty v-else :image="simpleImage" description="当前文件夹没有任何文件" />
     </a-spin>
-    <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin" @share="handleShare"/>
+    <file-viewer ref="fileViewerRef" @rename="handleRename" @download="handleDownload" @moveBin="moveBin"
+      @share="handleShare" />
     <file-namer ref="fileNamerRef" />
     <create-folder ref="createFolderRef" />
     <transition name="progress-viewer-transition" enter-active-class="animate__animated animate__fadeInRight"
@@ -46,6 +47,7 @@
         @cancelAllUpload="handleCancelAllUpload" />
     </transition>
     <file-sharer ref="fileSharerRef" />
+    <file-mover ref="fileMoverRef" />
   </div>
 </template>
 
@@ -58,6 +60,7 @@ import CreateFolder from './components/create-folder'
 import ProgressViewer from './components/progress-viewer'
 import FileSharer from './components/file-sharer'
 import FileBreadcrumb from './components/breadcrumb'
+import FileMover from './components/file-mover'
 
 import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
@@ -105,7 +108,8 @@ export default {
     CreateFolder,
     ProgressViewer,
     FileSharer,
-    FileBreadcrumb
+    FileBreadcrumb,
+    FileMover
   },
   methods: {
     async getPageData(parentId) {
@@ -379,30 +383,42 @@ export default {
         const type = e.dataTransfer.getData('type')
         const name = e.dataTransfer.getData('name')
         const parentId = file.id
-        // 根据源文件类型调用不同接口
-        if (type === 'folder') {
-          const payload = {
-            id,
-            name,
-            parentId
-          }
-          this.$store.dispatch('file/renameFolder', payload).then(response => {
-            const pid = this.$route.params.parentId
-            this.getPageData(pid)
-          })
+        const payload = {
+          id,
+          name,
+          parentId
         }
-        else {
-          const payload = {
-            resourceId: id,
-            originalName: name,
-            parentId
-          }
-          this.$store.dispatch('file/renameFile', payload).then(response => {
-            const pid = this.$route.params.parentId
-            this.getPageData(pid)
-          })
-        }
+        this.handleMoveFile(type, payload).then(() => {
+          const pid = this.$route.params.parentId
+          this.getPageData(pid)
+        })
       }
+    },
+    handleMoveFile(type, { id, name, parentId }) {
+      // 根据源文件类型调用不同接口
+      if (type === 'folder') {
+        const payload = {
+          id,
+          name,
+          parentId
+        }
+        return this.$store.dispatch('file/renameFolder', payload)
+      }
+      else {
+        const payload = {
+          resourceId: id,
+          originalName: name,
+          parentId
+        }
+        return this.$store.dispatch('file/renameFile', payload)
+      }
+    },
+    handleMove(payload) {
+      const callback = () => {
+        const pid = this.$route.params.parentId
+        return this.getPageData(pid)
+      }
+      this.$refs.fileMoverRef?.open(payload, callback)
     }
   },
   computed: {

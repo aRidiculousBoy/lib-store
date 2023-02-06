@@ -43,8 +43,38 @@ export default {
     handleClick() {
 
     },
-    handleContextMenu() {
-
+    handleContextMenu(event) {
+      this.$contextmenu({
+        items: [
+          {
+            label: "转存",
+            onClick: () => {
+              this.handleTransfer()
+            },
+            customClass: 'context-menu-item'
+          },
+          {
+            label: "下载",
+            onClick: () => {
+              this.handleDownload()
+            }
+          }
+        ],
+        event,
+        customClass: "file-context-menu",
+        zIndex: 3,
+        minWidth: 180
+      });
+      return false;
+    },
+    handleTransfer() {
+      const payload = {
+        ...this.$props
+      }
+      this.$emit('transfer', payload)
+    },
+    handleDownload() {
+      console.log('download')
     }
   }
 }
