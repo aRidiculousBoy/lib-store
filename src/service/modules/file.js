@@ -18,7 +18,9 @@ const FILEAPI = {
   RecoverFolderAPI: prefix + '/user/resource/folder/rc/',
   CreateShareAPI: prefix + '/user/resource/share/',
   GetFolderPathAPI: prefix + '/user/resource/location/',
-  TransferAPI: prefix + '/user/resource/share/transfer/'
+  TransferAPI: prefix + '/user/resource/share/transfer/',
+  DownloadShareAPI: prefix + '/user/resource/file/s/',
+  CreateCoShareAPI: prefix + '/user/resource/shared/'
 }
 
 // 获取用户文件列表
@@ -47,7 +49,7 @@ export const uploadChunkRequest = (payload) => {
 
 // 文件下载
 export const downloadFileRequest = (payload) => {
-  saveAs(FILEAPI.DownloadFileAPI + `${payload.type === 'folder' ? 0 : 1}/${payload.id}`,payload.name);
+  saveAs(FILEAPI.DownloadFileAPI + `${payload.type === 'folder' ? 0 : 1}/${payload.id}`, payload.name);
 }
 
 // 文件重命名
@@ -142,6 +144,23 @@ export const transferFileRequest = (payload) => {
   })
 }
 
+// 共享资源下载
+export const downloadShareRequest = (payload) => {
+  saveAs(FILEAPI.DownloadShareAPI + payload.shareName)
+}
+
+// 创建共享资源
+export const createCoShareRequest = (payload) => {
+  return request.post({
+    url: FILEAPI.CreateCoShareAPI,
+    data: {
+      userResourceId: payload.id,
+      type: payload.type === 'folder' ? 0 : 1,
+      intro: payload.intro
+    }
+  })
+}
+
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -157,5 +176,7 @@ export default {
   recoverFolderRequest,
   createShareRequest,
   getFolderPathRequest,
-  transferFileRequest
+  transferFileRequest,
+  downloadShareRequest,
+  createCoShareRequest
 }

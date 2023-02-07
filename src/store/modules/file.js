@@ -65,6 +65,14 @@ const file = {
       const response = await fileService.transferFileRequest(payload)
       return response
     },
+    async downloadShare(context, payload) {
+      const response = await fileService.downloadShareRequest(payload)
+      return response
+    },
+    async createCoShare(context, payload) {
+      const response = await fileService.createCoShareRequest(payload)
+      return response
+    }
   }
 }
 

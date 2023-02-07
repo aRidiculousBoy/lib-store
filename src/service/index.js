@@ -170,10 +170,11 @@ const request = new Request({
       }
       // 未登录或登录过期
       else if (data.code === 401) {
+        localStorage.clear()
         const route = {
-          path: '/user/login',
+          path: '/login'
         }
-        router.replace(router)
+        router.repace(route)
       } 
       else if (!data?.code) {
         return res

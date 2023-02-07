@@ -176,7 +176,7 @@ export default {
             attrs: {
               href: `/file-list/${parentId}`
             }
-          }, '移动成功，点击查看。')
+          }, '移动成功，点击查看')
         }
 
         this.$message.success(content, 5)
@@ -214,7 +214,7 @@ export default {
     visible(value) {
       if (!value) {
         this.showCreateFolder = false
-      } 
+      }
     }
   }
 }

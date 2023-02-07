@@ -43,7 +43,7 @@ const Album = () => import('@views/album')
 const Favor = () => import('@views/favor')
 const Share = () => import('@views/share')
 const Bin = () => import('@views/bin')
-
+const CoShare = () => import('@views/co-share')
 
 
 
@@ -124,7 +124,11 @@ export const constantRouterMap = [
   {
     name: 'Login',
     path: '/login',
-    component: Login
+    component: Login,
+    meta: {
+      addBreadcrumb: false,
+      module: '登录页'
+    }
   },
   {
     name: 'ShareDetails',
@@ -147,6 +151,7 @@ export const constantRouterMap = [
     redirect: '/file-list/0',
     meta: {
       title: '文件',
+      addBreadcrumb: true,
       hasSubMenu: false,
       icon: 'file'
     },
@@ -169,6 +174,7 @@ export const constantRouterMap = [
     meta: {
       title: '相册',
       hasSubMenu: false,
+      addBreadcrumb: true,
       icon: 'picture'
     },
     children: [
@@ -188,6 +194,7 @@ export const constantRouterMap = [
     redirect: '/favor',
     meta: {
       title: '收藏夹',
+      addBreadcrumb: true,
       hasSubMenu: false,
       icon: 'database'
     },
@@ -208,6 +215,7 @@ export const constantRouterMap = [
     redirect: '/share',
     meta: {
       title: '分享',
+      addBreadcrumb: true,
       hasSubMenu: false,
       icon: 'share-alt'
     },
@@ -222,12 +230,34 @@ export const constantRouterMap = [
     ]
   },
   {
+    name: 'CoShare',
+    path: '/co-share',
+    component: Layout,
+    redirect: '/co-share',
+    meta: {
+      title: '共享',
+      addBreadcrumb: true,
+      hasSubMenu: false,
+      icon: 'user'
+    },
+    children: [
+      {
+        path: '/co-share',
+        component: CoShare,
+        meta: {
+          module: '共享'
+        }
+      }
+    ]
+  },
+  {
     name: 'RecycleBin',
     path: '/recycle-bin',
     component: Layout,
     redirect: '/recycle-bin',
     meta: {
       title: '回收站',
+      addBreadcrumb: true,
       hasSubMenu: false,
       icon: 'rest'
     },

@@ -2,7 +2,7 @@ export function generateRoutes(routes) {
   let ret = []
   for (let i = 0; i < routes.length; i++) {
     const route = routes[i]
-    if (route.meta) {
+    if (route.meta && route.meta.addBreadcrumb) {
       ret.push(route)
     }
   }

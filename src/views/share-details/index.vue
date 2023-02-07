@@ -18,7 +18,8 @@
               </div>
               <a-divider></a-divider>
               <div class="list">
-                <file v-for="file in useFileList" :key="file.shareName" v-bind="file" @transfer="handleTransfer"/>
+                <file v-for="file in useFileList" :key="file.shareName" v-bind="file" @transfer="handleTransfer"
+                  @click="handleFileClick" @download="handleDownload" />
               </div>
             </a-card>
             <a-card style="flex: 1">
@@ -43,7 +44,7 @@
             </a-result>
           </a-card>
         </a-spin>
-        <file-saver ref="fileSaverRef"/>
+        <file-saver ref="fileSaverRef" />
       </a-layout-content>
     </a-layout>
   </div>
@@ -88,6 +89,17 @@ export default {
     },
     handleTransfer(file) {
       this.$refs.fileSaverRef?.open(file)
+    },
+    handleFileClick(payload) {
+      const { type, id } = payload
+      if (type === 'folder') {
+
+      } else {
+        this.handlePreview(payload)
+      }
+    },
+    handleDownload(file) {
+      this.$store.dispatch('file/downloadShare', file)
     }
   },
   watch: {

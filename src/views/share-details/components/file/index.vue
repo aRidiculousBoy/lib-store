@@ -41,7 +41,10 @@ export default {
   ,
   methods: {
     handleClick() {
-
+      const payload = {
+        ...this.$props
+      }
+      this.$emit('click', payload)
     },
     handleContextMenu(event) {
       this.$contextmenu({
@@ -74,7 +77,10 @@ export default {
       this.$emit('transfer', payload)
     },
     handleDownload() {
-      console.log('download')
+      const payload = {
+        ...this.$props
+      }
+      this.$emit('download', payload)
     }
   }
 }

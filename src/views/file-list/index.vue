@@ -29,7 +29,7 @@
               @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview" @share="handleShare"
               @dragstart.native="handleDragStart(file, $event)" @dragover.native="handleDragOver(file, $event)"
               @drop.native="handleDrop(file, $event)" @dragleave.native="handleDragLeave(file)" @move="handleMove"
-              :class="{ 'high-light': file.id === activeId }" />
+              :class="{ 'high-light': file.id === activeId }" @coShare="handleCoShare" />
           </a-col>
         </a-row>
       </div>
@@ -207,7 +207,7 @@ export default {
         fileContext.percentage = Math.ceil(uploadedList.length / length * 100)
         if (uploadedList.length === length) {
           fileContext.isFinished = true
-          return false
+          fileContext.chunkList = [fileContext.chunkList[0]]
         }
       }
 
@@ -419,6 +419,16 @@ export default {
         return this.getPageData(pid)
       }
       this.$refs.fileMoverRef?.open(payload, callback)
+    },
+    handleCoShare(payload) {
+      const parameters = {
+        id: payload.id,
+        type: payload.type,
+        intro: '-'
+      }
+      this.$store.dispatch('file/createCoShare', parameters).then(response => {
+        console.log(response)
+      })
     }
   },
   computed: {

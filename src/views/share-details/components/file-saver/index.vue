@@ -58,7 +58,7 @@ export default {
   },
   data() {
     return {
-      visible: true,
+      visible: false,
       loading: false,
       files: [],
       folders: [],

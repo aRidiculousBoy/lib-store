@@ -74,10 +74,15 @@ export default {
             }
           },
           {
+            label: "共享",
+            onClick: () => {
+              this.handleCoShare()
+            }
+          },
+          {
             label: "收藏",
             divided: true,
             customClass: 'context-menu-item'
-
           },
           {
             label: "重命名",
@@ -169,6 +174,12 @@ export default {
         type
       }
       this.$emit('move', payload)
+    },
+    handleCoShare() {
+      const payload = {
+        ...this.$props
+      }
+      this.$emit('coShare', payload)
     }
   }
 }
