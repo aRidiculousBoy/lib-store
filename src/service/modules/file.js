@@ -156,7 +156,8 @@ export const createCoShareRequest = (payload) => {
     data: {
       userResourceId: payload.id,
       type: payload.type === 'folder' ? 0 : 1,
-      intro: payload.intro
+      intro: payload.intro,
+      name: payload.name
     }
   })
 }

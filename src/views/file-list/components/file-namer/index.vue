@@ -2,7 +2,7 @@
   <div class="file-namer">
     <a-modal v-model="visible" :title="file.rawName + ' - 重命名'" okText="确定" cancelText="取消" @ok="handleRename"
       :z-index="9999">
-      <a-input v-model="file.name" ref="inputRef"></a-input>
+      <a-input v-model="file.name" ref="inputRef" allow-clear></a-input>
     </a-modal>
   </div>
 </template>

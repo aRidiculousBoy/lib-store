@@ -37,7 +37,7 @@
           <a-button @click="close">
             取消
           </a-button>
-          <a-button type="primary" :loading="loading" @click="handleMove">
+          <a-button type="primary" :loading="submitting" @click="handleMove">
             保存到此处
           </a-button>
         </a-space>
@@ -68,7 +68,8 @@ export default {
       showCreateFolder: true,
       folderName: undefined,
       activeFile: {},
-      callback: undefined
+      callback: undefined,
+      submitting: false
     }
   },
   created() {
@@ -161,7 +162,7 @@ export default {
       }
     },
     handleMove() {
-      this.loading = true
+      this.submitting = true
       const { type, id, name } = this.activeFile
       const parentId = this.parentId
       const payload = {
@@ -182,7 +183,7 @@ export default {
         this.$message.success(content, 5)
       }).finally(() => {
         this.close()
-        this.loading = false
+        this.submitting = false
       })
     }
   },
@@ -214,6 +215,9 @@ export default {
     visible(value) {
       if (!value) {
         this.showCreateFolder = false
+      }
+      else {
+        this.getData(this.parentId)
       }
     }
   }

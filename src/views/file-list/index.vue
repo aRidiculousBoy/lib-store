@@ -48,6 +48,7 @@
     </transition>
     <file-sharer ref="fileSharerRef" />
     <file-mover ref="fileMoverRef" />
+    <file-co-sharer ref="fileCoSharerRef" />
   </div>
 </template>
 
@@ -61,6 +62,7 @@ import ProgressViewer from './components/progress-viewer'
 import FileSharer from './components/file-sharer'
 import FileBreadcrumb from './components/breadcrumb'
 import FileMover from './components/file-mover'
+import FileCoSharer from './components/file-co-sharer'
 
 import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
@@ -76,7 +78,6 @@ export default {
   data() {
     // 文件分块上传成功的回调
     const successCallback = (response, fileContext) => {
-      console.log(response.allSuccess)
       if (response.allSuccess) {
         fileContext.isFinished = true
         fileContext.isUploading = false
@@ -87,6 +88,7 @@ export default {
     }
     // 文件分块上传失败的回调
     const failedCallback = (response, fileContext) => { }
+
     return {
       folders: [],
       files: [],
@@ -109,7 +111,8 @@ export default {
     ProgressViewer,
     FileSharer,
     FileBreadcrumb,
-    FileMover
+    FileMover,
+    FileCoSharer
   },
   methods: {
     async getPageData(parentId) {
@@ -376,10 +379,11 @@ export default {
       this.activeId = undefined
 
       const targetType = file.type
-      const targetIsFolder = targetType === 'folder'
+      const targetId = file.id
+      const id = e.dataTransfer.getData('sourceId')
+      const isMovable = targetType === 'folder' && id != targetId
       // 如果目标类型为文件夹才能够进行移动操作
-      if (targetIsFolder) {
-        const id = e.dataTransfer.getData('sourceId')
+      if (isMovable) {
         const type = e.dataTransfer.getData('type')
         const name = e.dataTransfer.getData('name')
         const parentId = file.id
@@ -421,14 +425,7 @@ export default {
       this.$refs.fileMoverRef?.open(payload, callback)
     },
     handleCoShare(payload) {
-      const parameters = {
-        id: payload.id,
-        type: payload.type,
-        intro: '-'
-      }
-      this.$store.dispatch('file/createCoShare', parameters).then(response => {
-        console.log(response)
-      })
+      this.$refs.fileCoSharerRef?.open(payload)
     }
   },
   computed: {

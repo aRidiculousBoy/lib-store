@@ -174,7 +174,7 @@ const request = new Request({
         const route = {
           path: '/login'
         }
-        router.repace(route)
+        router.replace(route)
       } 
       else if (!data?.code) {
         return res

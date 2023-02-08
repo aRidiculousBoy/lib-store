@@ -37,7 +37,7 @@
           <a-button @click="close">
             取消
           </a-button>
-          <a-button type="primary" :loading="loading" @click="handleTransfer">
+          <a-button type="primary" :loading="submitting" @click="handleTransfer">
             {{ isRoot? '保存到根目录': '保存到此处' }}
           </a-button>
         </a-space>
@@ -166,7 +166,7 @@ export default {
     handleTransfer() {
       // 单个资源保存
       if (this.file) {
-        this.loading = true
+        this.submitting = true
         const { shareName } = this.file
         const { parentId, parentName } = this
         const payload = {
@@ -190,7 +190,7 @@ export default {
           })
         }).finally(() => {
           this.close()
-          this.loading = false
+          this.submitting = false
         })
       }
       // 保存全部
@@ -230,6 +230,9 @@ export default {
     visible(value) {
       if (!value) {
         this.showCreateFolder = false
+      }
+      else {
+        this.getData(this.parentId)
       }
     }
   }
