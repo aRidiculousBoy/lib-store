@@ -1,53 +1,18 @@
 # Lib-Store
 
-------
-
 ### 在线预览
 
 [Lib-Store](http://119.91.214.15:1024/)
 
-### 目录结构
+### 介绍
 
-------
+Lib-Store是一款简单易用的Web存储系统。
 
-```javascript
-- dist 生产环境目录文件
+目前已经实现了文件断点续传、文件下载、取消上传、继续上传、文件移动、文件分享等功能。
 
-- dist.test 测试环境目录文件
-
-- node_modules 项目依赖
-
-- public
-  - favicon.ico 网站图标
-  - index.html 页面入口文件
-  - config.js 动态且不需要rebuild配置抽离文件
-- src
-  - assets 静态资源目录
-  - components 公共组件
-  - directives Vue指令
-  - layout 系统布局组件
-  - constants 常量放置文件
-  - utils 公共业务方法或第三方工具库
-  - configs 系统配置
-  - router 系统路由
-  - routes 系统路由菜单配置
-  - service 请求接口
-  - store 状态管理
-  - views 系统页面目录，对应 routes 配置
-  - App.vue 根组件
-  - main.js 系统入口
-- .env.development 开发环境变量配置，只在dev模式中被载入
-
-- .env.test 测试环境变量配置，只在test模式中被载入
-
-- .env.production 生产环境变量配置，只在production模式中被载入
-
-- vue.config.js 项目构建配置
-```
+其它功能进一步开发中。
 
 ###  开发
-
-------
 
 ```javascript
 # 克隆项目
@@ -65,8 +30,6 @@ npm run dev
 
 ### 发布
 
-------
-
 ```
 # 构建测试环境
 npm run build:test
@@ -77,6 +40,4 @@ npm run build
 
 ### 其它
 
-------
-
-该仓库隶属于系统的前端，后端仓库地址请见[Lib-Store后端](https://github.com/SnailQxQ/netDisk)
+该仓库隶属于系统的前端，后端仓库地址详见[Lib-Store后端](https://github.com/SnailQxQ/netDisk)。
