@@ -2,13 +2,13 @@
   <div class="page-layout">
     <a-layout id="components-layout-demo-custom-trigger">
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible :width="240">
-        <div class="logo"> 
+        <div class="logo">
           <span class="app-name" :title="appTitle">{{ appTitle }}</span>
         </div>
 
         <sidebar :collapsed="collapsed" />
       </a-layout-sider>
-      <a-layout>
+      <a-layout class="layout-content">
         <a-layout-header style="background: #fff; padding: 0">
           <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
             @click="() => (collapsed = !collapsed)" />
@@ -100,6 +100,24 @@ export default {
 .ant-layout {
   width: 100%;
   height: 100%;
+  overflow-x: hidden;
+}
+
+.layout-content {
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    max-width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #e9e9e9e9;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 25px;
+  }
 }
 
 #components-layout-demo-custom-trigger .trigger {

@@ -11,6 +11,7 @@ import mp3Svg from '@/assets/svg/mp3.svg'
 import mp4Svg from '@/assets/svg/mp4.svg'
 import pdfSvg from '@/assets/svg/pdf.svg'
 import pngSvg from '@/assets/svg/png.svg'
+import fallbackSvg from '@/assets/svg/fallback.svg'
 
 const typeMapper = {
   'folder': folderSvg,
@@ -18,7 +19,8 @@ const typeMapper = {
   '.mp3': mp3Svg,
   '.mp4': mp4Svg,
   '.pdf': pdfSvg,
-  '.png': pngSvg
+  '.png': pngSvg,
+  'fallback': fallbackSvg
 }
 
 export default {
@@ -30,3 +32,8 @@ export default {
   }
 }
 </script>
+<style>
+body {
+  overflow: none;
+}
+</style>

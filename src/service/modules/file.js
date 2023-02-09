@@ -20,7 +20,14 @@ const FILEAPI = {
   GetFolderPathAPI: prefix + '/user/resource/location/',
   TransferAPI: prefix + '/user/resource/share/transfer/',
   DownloadShareAPI: prefix + '/user/resource/file/s/',
-  CreateCoShareAPI: prefix + '/user/resource/shared/'
+  CreateCoShareAPI: prefix + '/user/resource/shared/',
+  GetOwnPublicAPI: prefix + '/user/resource/shared/',
+  GetPublicShareAPI: prefix + '/user/resource/shared/public/',
+  GetSubscribeAPI: prefix + '/user/resource/sub/',
+  SubscribeAPI: prefix + '/user/resource/shared/public/sub/',
+  UnSubScribeAPI: prefix + '/user/resource/shared/',
+  TransferPublicAPI: prefix + '/user/resource/shared/public/transfer/',
+  UnCoShareAPI: prefix + '/user/resource/shared/'
 }
 
 // 获取用户文件列表
@@ -162,6 +169,68 @@ export const createCoShareRequest = (payload) => {
   })
 }
 
+// 我的共享资源
+export const getOwnPublicRequest = (payload) => {
+  return request.get({
+    url: FILEAPI.GetOwnPublicAPI
+  })
+}
+
+// 获取所有的共享文件
+export const getPublicShareRequest = (payload) => {
+  return request.get({
+    url: FILEAPI.GetPublicShareAPI,
+    params: {
+      name: payload.name,
+      page: payload.pageNum,
+      size: payload.pageSize
+    }
+  })
+}
+
+// 获取订阅列表
+export const getSubscribeRequest = (payload) => {
+  return request.get({
+    url: FILEAPI.GetSubscribeAPI
+  })
+}
+
+// 添加订阅
+export const subscribeRequest = (payload) => {
+  return request.post({
+    url: FILEAPI.SubscribeAPI,
+    data: {
+      id: payload.id
+    }
+  })
+}
+
+// 取消订阅
+export const unSubscribeRequest = (payload) => {
+  return request.delete({
+    url: FILEAPI.UnSubScribeAPI + payload.id
+  })
+}
+
+// 转存共享资源
+export const transferPublicRequest = (payload) => {
+  return request.post({
+    url: FILEAPI.TransferPublicAPI,
+    data: {
+      id: payload.id,
+      parentId: payload.parentId
+    }
+  })
+}
+
+
+// 取消共享资源
+export const unCoShareRequest = (payload) => {
+  return request.delete({
+    url: FILEAPI.UnCoShareAPI + payload.id
+  })
+}
+
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -179,5 +248,12 @@ export default {
   getFolderPathRequest,
   transferFileRequest,
   downloadShareRequest,
-  createCoShareRequest
+  createCoShareRequest,
+  getOwnPublicRequest,
+  getPublicShareRequest,
+  getSubscribeRequest,
+  subscribeRequest,
+  unSubscribeRequest,
+  transferPublicRequest,
+  unCoShareRequest
 }

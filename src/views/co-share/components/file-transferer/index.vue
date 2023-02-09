@@ -1,6 +1,6 @@
 <template>
-  <div class="file-mover">
-    <a-modal v-model="visible" title="保存到" :bodyStyle="{ 'max-height': '480px', 'overflow-y': 'scroll', }">
+  <div class="file-transferer">
+    <a-modal v-model="visible" title="保存到">
       <file-breadcrumb :items="routeStack" separator=">" :prefix="{ id: 0, name: '文件' }"
         :clickFn="handleBreadcrumbClick" class="breadcrumb" />
       <a-spin :spinning="loading" tip="加载中">
@@ -23,8 +23,8 @@
           </a-space>
         </div>
         <div v-if="fileList.length" class="file-list">
-          <div :class="[file.type === 'folder' && file.id !== activeFile.id ? 'save-item' : 'disable']"
-            v-for="file in fileList" :key="file.id" @click="handleFileClick(file)" :title="file.name">
+          <div :class="[file.type === 'folder' ? 'save-item' : 'disable']" v-for="file in fileList" :key="file.id"
+            @click="handleFileClick(file)" :title="file.name">
             <img :src="typeMapper[file.extension] || typeMapper.fallback" class="file-cover">
             <div class="file-name">{{ file.name }}</div>
           </div>
@@ -37,8 +37,8 @@
           <a-button @click="close">
             取消
           </a-button>
-          <a-button type="primary" :loading="submitting" @click="handleMove">
-            保存到此处
+          <a-button type="primary" :loading="submitting" @click="handleTransfer">
+            {{ isRoot? '保存到根目录': '保存到此处' }}
           </a-button>
         </a-space>
       </template>
@@ -51,7 +51,7 @@ import { Empty } from 'ant-design-vue';
 import FileBreadcrumb from '@views/file-list/components/breadcrumb'
 
 export default {
-  name: 'file-mover',
+  name: 'file-saver',
   inject: ['typeMapper'],
   components: {
     FileBreadcrumb
@@ -60,16 +60,16 @@ export default {
     return {
       visible: false,
       loading: false,
+      submitting: false,
       files: [],
       folders: [],
       parentId: 0,
+      parentName: undefined,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       routeStack: [],
       showCreateFolder: true,
       folderName: undefined,
-      activeFile: {},
-      callback: undefined,
-      submitting: false
+      file: undefined
     }
   },
   created() {
@@ -90,13 +90,13 @@ export default {
         this.loading = false
       })
     },
-    open(file, callback) {
-      this.activeFile = file
-      this.callback = callback
+    open(file) {
+      this.file = file
       this.visible = true
     },
     close() {
       this.visible = false
+      this.showCreateFolder = false
     },
     openCreateFolder() {
       this.folderName = undefined
@@ -157,34 +157,41 @@ export default {
     },
     handleFileClick(file) {
       const { type, id } = file
-      if (type === 'folder' && file.id !== this.activeFile.id) {
+      if (type === 'folder') {
+        this.parentName = file.name
         this.getData(id)
       }
     },
-    handleMove() {
-      this.submitting = true
-      const { type, id, name } = this.activeFile
-      const parentId = this.parentId
-      const payload = {
-        parentId,
-        id,
-        name
-      }
-      this.$parent.handleMoveFile(type, payload).then(() => {
-        this.callback && this.callback()
-        const content = h => {
-          return h('a', {
-            attrs: {
-              href: `/file-list/${parentId}`
-            }
-          }, '移动成功，点击查看')
+    handleTransfer() {
+      // 单个资源保存
+      if (this.file) {
+        this.submitting = true
+        const { id } = this.file
+        const { parentId, parentName } = this
+        const payload = {
+          id,
+          parentId
         }
-
-        this.$message.success(content, 5)
-      }).finally(() => {
-        this.close()
-        this.submitting = false
-      })
+        this.$store.dispatch('file/transferPublic', payload).then(response => {
+          this.$notification.success({
+            message: '文件保存成功',
+            description: h => {
+              return h('div', null, [
+                h('span', {
+                }, `已保存到-`),
+                h('a', {
+                  attrs: {
+                    href: `/file-list/${parentId}`
+                  }
+                }, parentName)
+              ])
+            }
+          })
+        }).finally(() => {
+          this.close()
+          this.submitting = false
+        })
+      }
     }
   },
   computed: {
@@ -209,6 +216,9 @@ export default {
       })
 
       return [...this.folders, ...this.files]
+    },
+    isRoot() {
+      return this.parentId === 0
     }
   },
   watch: {
@@ -224,7 +234,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped  lang="less">
 /deep/ .ant-modal-footer {
   display: flex;
   justify-content: space-between;
@@ -304,7 +314,7 @@ export default {
 }
 
 /deep/ .ant-modal-body {
-  max-height: 655px;
+  max-height: 480px;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {

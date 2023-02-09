@@ -5,37 +5,40 @@
         <template slot="header">
           上传进度
         </template>
-        <div class="file-progress-viewer" v-for="(task, index) in runningTasks" :key="task.hash">
-          <div class="file-cover">
-            <img :src="typeMapper[task.ext]">
+        <div class="taskList">
+          <div class="file-progress-viewer" v-for="(task, index) in runningTasks" :key="task.key">
+            <div class="file-cover">
+              <img :src="typeMapper[task.ext] || typeMapper.fallback">
+            </div>
+            <div class="bar">
+              <div class="text" :title="task.filename">{{ task.filename }}</div>
+              <a-progress :percent="task.percentage" :showInfo="false"
+                :status="task.isFinished ? 'success' : 'normal'" />
+            </div>
+            <div class="action" v-if="!task.isFinished">
+              <a-space>
+                <a-tooltip>
+                  <template slot="title">
+                    取消上传
+                  </template>
+                  <img :src="closeSvg" @click="openTaskModal(task, index)">
+                </a-tooltip>
+                <a-tooltip v-if="task.isUploading">
+                  <template slot="title">
+                    暂停
+                  </template>
+                  <img :src="pauseSvg" @click="handlePauseUpload(task)">
+                </a-tooltip>
+                <a-tooltip v-else>
+                  <template slot="title">
+                    继续
+                  </template>
+                  <img :src="refreshSvg" @click="handleContinueUpload(task)">
+                </a-tooltip>
+              </a-space>
+            </div>
+            <div v-else>上传完成</div>
           </div>
-          <div class="bar">
-            <div class="text" :title="task.filename">{{ task.filename }}</div>
-            <a-progress :percent="task.percentage" :showInfo="false" :status="task.isFinished ? 'success' : 'normal'" />
-          </div>
-          <div class="action" v-if="!task.isFinished">
-            <a-space>
-              <a-tooltip>
-                <template slot="title">
-                  取消上传
-                </template>
-                <img :src="closeSvg" @click="openTaskModal(task, index)">
-              </a-tooltip>
-              <a-tooltip v-if="task.isUploading">
-                <template slot="title">
-                  暂停
-                </template>
-                <img :src="pauseSvg" @click="handlePauseUpload(task)">
-              </a-tooltip>
-              <a-tooltip v-else>
-                <template slot="title">
-                  继续
-                </template>
-                <img :src="refreshSvg" @click="handleContinueUpload(task)">
-              </a-tooltip>
-            </a-space>
-          </div>
-          <div v-else>上传完成</div>
         </div>
         <template slot="extra">
           <a-space v-if="isCancelable" class="more-action">
@@ -82,10 +85,6 @@
 import refreshSvg from '@/assets/svg/refresh.svg'
 import pauseSvg from '@/assets/svg/pause.svg'
 import closeSvg from '@/assets/svg/close.svg'
-
-
-
-
 
 export default {
   name: 'progress-viewer',
@@ -196,14 +195,31 @@ export default {
 
 <style scoped lang="less">
 .progress-viewer {
-  width: 18%;
+  width: 20%;
   position: absolute;
   right: 8px;
   bottom: 16%;
 }
 
+.taskList {
+  max-height: 488px;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #e9e9e9e9;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 25px;
+  }
+}
+
 .file-progress-viewer {
-  padding: 8px;
+  padding: 16px;
   display: flex;
   align-items: center;
   transition: all .1s ease;

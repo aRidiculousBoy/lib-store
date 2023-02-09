@@ -72,6 +72,34 @@ const file = {
     async createCoShare(context, payload) {
       const response = await fileService.createCoShareRequest(payload)
       return response
+    },
+    async getOwnPublic(context, payload) {
+      const response = await fileService.getOwnPublicRequest(payload)
+      return response
+    },
+    async getPublicShare(context, payload) {
+      const response = await fileService.getPublicShareRequest(payload)
+      return response
+    },
+    async getSubscribe(context, payload) {
+      const response = await fileService.getSubscribeRequest(payload)
+      return response
+    },
+    async subscribe(context, payload) {
+      const response = await fileService.subscribeRequest(payload)
+      return response
+    },
+    async unSubscribe(context, payload) {
+      const response = await fileService.unSubscribeRequest(payload)
+      return response
+    },
+    async transferPublic(context, payload) {
+      const response = await fileService.transferPublicRequest(payload)
+      return response
+    },
+    async unCoShare(context, payload) {
+      const response = await fileService.unCoShareRequest(payload)
+      return response
     }
   }
 }

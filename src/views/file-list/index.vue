@@ -66,6 +66,7 @@ import FileCoSharer from './components/file-co-sharer'
 
 import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
+import { uuid } from '@/utils/utils'
 import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
@@ -192,12 +193,13 @@ export default {
         isUploading: false,
         isFinished: false,
         cancel: undefined,
-        ext: getExt(file.name)
+        ext: getExt(file.name),
+        key: uuid()
       }
       // 创建分片列表
       fileContext.chunkList = createChunks(file)
       fileContext.hash = await calculateHash(fileContext.chunkList)
-      this.uploadingList.push(fileContext)
+      this.uploadingList.unshift(fileContext)
       // 云端已经存储?
       let uploadedList = await this.$store.dispatch('file/getFileProgress', {
         hash: fileContext.hash

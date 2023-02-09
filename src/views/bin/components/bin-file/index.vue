@@ -1,6 +1,6 @@
 <template>
   <div class="bin-file" :title="name" :style="fileStyle" draggable="true" @contextmenu.prevent="handleContextMenu">
-    <img :src="typeMapper[extension]" class="file-cover">
+    <img :src="typeMapper[extension] || typeMapper.fallback" class="file-cover">
     <div class="name">{{ name }}</div>
   </div>
 </template>

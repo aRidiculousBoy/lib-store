@@ -1,7 +1,7 @@
 <template>
   <div class="file" :title="originalName" :style="fileStyle" draggable="true" @contextmenu.prevent="handleContextMenu"
     @click="handleClick">
-    <img :src="typeMapper[extension]" class="file-cover">
+    <img :src="typeMapper[extension] || typeMapper.fallback" class="file-cover">
     <div class="name">{{ originalName }}</div>
   </div>
 </template>

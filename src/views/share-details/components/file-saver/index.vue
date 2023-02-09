@@ -25,7 +25,7 @@
         <div v-if="fileList.length" class="file-list">
           <div :class="[file.type === 'folder' ? 'save-item' : 'disable']" v-for="file in fileList" :key="file.id"
             @click="handleFileClick(file)" :title="file.name">
-            <img :src="typeMapper[file.extension]" class="file-cover">
+            <img :src="typeMapper[file.extension] || typeMapper.fallback" class="file-cover">
             <div class="file-name">{{ file.name }}</div>
           </div>
         </div>
@@ -60,6 +60,7 @@ export default {
     return {
       visible: false,
       loading: false,
+      submitting: false,
       files: [],
       folders: [],
       parentId: 0,

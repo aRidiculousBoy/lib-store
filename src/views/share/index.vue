@@ -25,8 +25,7 @@
 
       <a-table :columns="list.columns" :data-source="list.data" rowKey="shareName" bordered :pagination="false"
         :row-selection="{ selectedRowKeys: list.selectedRowKeys, onChange: onSelectChange, getCheckboxProps: list.getCheckboxProps }"
-        :loading="list.loading"
-        >
+        :loading="list.loading">
         <span slot="originalName" slot-scope="name">{{ name | nameFilter }}</span>
         <span slot="createTime" slot-scope="createTime"> {{ createTime | dateFormat }}</span>
         <span slot="survivalTime" slot-scope="survivalTime">{{ survivalTime | timeLengthFormat}}</span>
