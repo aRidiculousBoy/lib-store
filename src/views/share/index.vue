@@ -17,46 +17,66 @@
         </a-form-model-item>
       </a-form-model>
     </a-card>
-    <a-card class="content">
-      <div slot="title" class="action">
-        <span>全部文件</span>
-        <a-button :disabled="!list.selectedRowKeys.length" @click="handleUnShare(list.selectedRowKeys)">取消分享</a-button>
-      </div>
+    <fullscreen v-model="fullscreen">
+      <a-card class="content">
+        <div slot="title" class="action">
+          <span>全部文件</span>
+          <a-space size="middle">
+            <a-space size="middle">
+              <a-tooltip>
+                <span slot="title">刷新</span>
+                <a-icon type="reload" @click="getShareResource" class="hover" />
+              </a-tooltip>
+              <a-tooltip>
+                <span slot="title" v-if="!fullscreen">全屏</span>
+                <a-icon type="scan" @click="fullscreen = !fullscreen" class="hover" />
+              </a-tooltip>
+            </a-space>
+            <a-divider type="vertical" />
+            <a-button :disabled="!list.selectedRowKeys.length"
+              @click="handleUnShare(list.selectedRowKeys)">取消分享</a-button>
+          </a-space>
+        </div>
 
-      <a-table :columns="list.columns" :data-source="list.data" rowKey="shareName" bordered :pagination="false"
-        :row-selection="{ selectedRowKeys: list.selectedRowKeys, onChange: onSelectChange, getCheckboxProps: list.getCheckboxProps }"
-        :loading="list.loading">
-        <span slot="originalName" slot-scope="name">{{ name | nameFilter }}</span>
-        <span slot="createTime" slot-scope="createTime"> {{ createTime | dateFormat }}</span>
-        <span slot="survivalTime" slot-scope="survivalTime">{{ survivalTime | timeLengthFormat}}</span>
-        <span slot="valid" slot-scope="valid">
-          <a-badge v-if="valid" status="success" text="未失效" />
-          <a-badge v-else status="error" text="已失效" />
-        </span>
-        <a-space slot="action" slot-scope="record">
-          <a v-copy="{ text: prefix + '/share-details/' + record.shareName, callback: copyCallback }">复制链接</a>
-          <a-divider type="vertical" />
-          <a-popconfirm ok-text="确定" cancel-text="取消" @confirm="handleUnShare(record)" okType="danger">
-            <div slot="title">
-              取消分享后，该条分享记录将被删除，
-              好友将无法再访问此分享链接。
-              您确认要取消分享吗？
-            </div>
-            <a>取消分享</a>
-          </a-popconfirm>
-        </a-space>
-        <div slot="footer">共 {{ list.data.length }}条</div>
-      </a-table>
-    </a-card>
+        <a-table :columns="list.columns" :data-source="list.data" rowKey="shareName" bordered :pagination="false"
+          :row-selection="{ selectedRowKeys: list.selectedRowKeys, onChange: onSelectChange, getCheckboxProps: list.getCheckboxProps }"
+          :loading="list.loading">
+          <span slot="originalName" slot-scope="name">{{ name | nameFilter }}</span>
+          <span slot="createTime" slot-scope="createTime"> {{ createTime | dateFormat }}</span>
+          <span slot="survivalTime" slot-scope="survivalTime">{{ survivalTime | timeLengthFormat}}</span>
+          <span slot="valid" slot-scope="valid">
+            <a-badge v-if="valid" status="success" text="未失效" />
+            <a-badge v-else status="error" text="已失效" />
+          </span>
+          <a-space slot="action" slot-scope="record">
+            <a v-copy="{ text: prefix + '/share-details/' + record.shareName, callback: copyCallback }">复制链接</a>
+            <a-divider type="vertical" />
+            <a-popconfirm ok-text="确定" cancel-text="取消" @confirm="handleUnShare(record)" okType="danger">
+              <div slot="title">
+                取消分享后，该条分享记录将被删除，
+                好友将无法再访问此分享链接。
+                您确认要取消分享吗？
+              </div>
+              <a>取消分享</a>
+            </a-popconfirm>
+          </a-space>
+          <div slot="footer">共 {{ list.data.length }}条</div>
+        </a-table>
+      </a-card>
+    </fullscreen>
   </div>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import { copy } from '@/directives'
+import Fullscreen from '@/components/Fullscreen'
 
 export default {
   name: 'share',
+  components: {
+    Fullscreen
+  },
   data() {
     return {
       layout: 'inline',
@@ -110,7 +130,8 @@ export default {
           return record
         }
       },
-      prefix: window.location.host
+      prefix: window.location.host,
+      fullscreen: false
     }
   },
   created() {
@@ -217,6 +238,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.hover {
+  font-size: 20px;
+
+  &:hover {
+    color: skyblue;
+  }
 }
 </style>
 

@@ -25,7 +25,7 @@ const FILEAPI = {
   GetPublicShareAPI: prefix + '/user/resource/shared/public/',
   GetSubscribeAPI: prefix + '/user/resource/sub/',
   SubscribeAPI: prefix + '/user/resource/shared/public/sub/',
-  UnSubScribeAPI: prefix + '/user/resource/shared/',
+  UnSubScribeAPI: prefix + '/user/resource/sub/',
   TransferPublicAPI: prefix + '/user/resource/shared/public/transfer/',
   UnCoShareAPI: prefix + '/user/resource/shared/'
 }

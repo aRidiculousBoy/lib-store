@@ -1,46 +1,60 @@
 <template>
   <div class="co-share">
-    <a-card :tab-list="tabList" :active-tab-key="activeKey" @tabChange="onTabChange">
-      <div v-if="activeKey === 'own-share' || activeKey === 'subscribe'" style="margin-bottom: 16px;text-align: right;">
-        <a-space>
-          <a-button icon="reload" @click="handleRefresh">刷新</a-button>
-          <a-button icon="delete" type="primary" :disabled="!list.selectedRowKeys.length">取消共享</a-button>
-        </a-space>
-      </div>
-      <a-table :columns="list.columns" :data-source="list.data" rowKey="id" bordered :loading="list.loading"
-        :row-selection="{ selectedRowKeys: list.selectedRowKeys, onChange: onSelectChange, getCheckboxProps: list.getCheckboxProps }">
-        <span slot="name" slot-scope="name">{{ name || '-'}}</span>
-        <span slot="type" slot-scope="scope">{{ scope | typeFilter}}</span>
-        <span slot="intro" slot-scope="intro">{{ intro || '-' }}</span>
-        <div class="action" slot="action" slot-scope="text,record">
-          <a-space v-if="activeKey === 'own-share'">
-            <a>详情</a>
+    <fullscreen v-model="fullscreen">
+      <a-card :tab-list="tabList" :active-tab-key="activeKey" @tabChange="onTabChange">
+        <div v-if="activeKey === 'own-share' || activeKey === 'subscribe'"
+          style="margin-bottom: 16px;text-align: right;">
+          <a-space size="middle">
+            <a-space size="middle">
+              <a-tooltip>
+                <span slot="title">刷新</span>
+                <a-icon type="reload" @click="handleRefresh" class="hover" />
+              </a-tooltip>
+              <a-tooltip>
+                <span slot="title" v-if="!fullscreen">全屏</span>
+                <a-icon type="scan" @click="fullscreen = !fullscreen" class="hover" />
+              </a-tooltip>
+            </a-space>
             <a-divider type="vertical" />
-            <a-popconfirm ok-text="确定" cancel-text="取消" @confirm="handleUnCoShare(record)" okType="danger">
-              <div slot="title">
-                取消共享后，该条共享记录将被删除， 好友将无法再访问此资源。 您确认要取消共享吗？
-              </div>
-              <a>取消共享</a>
-            </a-popconfirm>
-          </a-space>
-          <a-space v-if="activeKey === 'subscribe'">
-            <a :class="{ disabled: !record.userId }" @click="handleTransfer(record)">转存</a>
-            <a-divider type="vertical" />
-            <a @click="handleUnSubscribe(record)" :class="{ disabled: !record.userId }">取消关注</a>
-          </a-space>
-          <a-space v-else-if="activeKey === 'co-share'">
-            <a @click="handleTransfer(record)">转存</a>
-            <a-divider type="vertical" />
-            <a @click="handleSubscribe(record)">关注</a>
-          </a-space>
+            <a-button icon="delete" type="primary" :disabled="!list.selectedRowKeys.length">取消共享</a-button></a-space>
         </div>
-      </a-table>
-    </a-card>
+        <a-table :columns="list.columns" :data-source="list.data" rowKey="id" bordered :loading="list.loading"
+          :row-selection="{ selectedRowKeys: list.selectedRowKeys, onChange: onSelectChange, getCheckboxProps: list.getCheckboxProps }">
+          <span slot="name" slot-scope="name">{{ name || '-'}}</span>
+          <span slot="type" slot-scope="scope">{{ scope | typeFilter}}</span>
+          <span slot="intro" slot-scope="intro">{{ intro || '-' }}</span>
+          <div class="action" slot="action" slot-scope="text,record">
+            <a-space v-if="activeKey === 'own-share'">
+              <a>详情</a>
+              <a-divider type="vertical" />
+              <a-popconfirm ok-text="确定" cancel-text="取消" @confirm="handleUnCoShare(record)" okType="danger">
+                <div slot="title">
+                  取消共享后，该条共享将失效。您确认要取消共享吗？
+                </div>
+                <a>取消共享</a>
+              </a-popconfirm>
+            </a-space>
+            <a-space v-if="activeKey === 'subscribe'">
+              <a :class="{ disabled: !record.userId }" @click="handleTransfer(record)">转存</a>
+              <a-divider type="vertical" />
+              <a @click="handleUnSubscribe(record)" :class="{ disabled: !record.userId }">取消关注</a>
+            </a-space>
+            <a-space v-else-if="activeKey === 'co-share'">
+              <a @click="handleTransfer(record)">转存</a>
+              <a-divider type="vertical" />
+              <a @click="handleSubscribe(record)">关注</a>
+            </a-space>
+          </div>
+        </a-table>
+      </a-card>
+    </fullscreen>
     <file-transferer ref="fileTransfererRef" />
   </div>
 </template>
 <script>
 import FileTransferer from './components/file-transferer'
+import Fullscreen from '@/components/Fullscreen'
+
 import { uuid } from '@/utils/utils'
 
 const map = {
@@ -51,7 +65,7 @@ const map = {
 
 export default {
   name: 'co-share',
-  components: { FileTransferer },
+  components: { FileTransferer, Fullscreen },
   data() {
     return {
       tabList: [
@@ -91,7 +105,7 @@ export default {
             title: '操作',
             dataIndex: 'action',
             scopedSlots: { customRender: 'action' },
-            width: 196
+            width: 256
           }
         ],
         data: [],
@@ -109,6 +123,7 @@ export default {
         }
       },
       activeKey: 'own-share',
+      fullscreen: false
     }
   },
   methods: {
@@ -235,5 +250,13 @@ export default {
   opacity: 0.48;
   color: rgb(96, 98, 102);
   cursor: not-allowed;
+}
+
+.hover {
+  font-size: 20px;
+
+  &:hover {
+    color: skyblue;
+  }
 }
 </style>
