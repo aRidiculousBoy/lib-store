@@ -17,7 +17,7 @@
         </a-form-model-item>
       </a-form-model>
     </a-card>
-    <fullscreen v-model="fullscreen">
+    <fullscreen v-model="fullscreen" class="fullscreen-usage">
       <a-card class="content">
         <div slot="title" class="action">
           <span>全部文件</span>
@@ -223,6 +223,10 @@ export default {
 .share-page {
   padding: 24px;
   height: 100%;
+  background-color: rgb(240, 242, 245);
+}
+
+.fullscreen-usage {
   background-color: rgb(240, 242, 245);
 }
 

@@ -1,7 +1,5 @@
 // 导入组件
 const Layout = () => import('@/layout/index.vue')
-const Workspace = () => import('@views/dashboard/workspace')
-const Analysis = () => import('@views/dashboard/analysis')
 
 // 登录组件
 const Login = () => import('@/views/login')
@@ -9,33 +7,7 @@ const Login = () => import('@/views/login')
 const ShareDetails = () => import('@views/share-details')
 
 // 异常页组件
-const UnAuthorization = () => import('@views/exception/403')
 const NotFound = () => import('@/views/exception/404')
-const ServerError = () => import('@views/exception/500')
-const CommingSoon = () => import('@/views/exception/commingsoon')
-
-// 个人页面组件
-const Center = () => import('@views/profile/center')
-const Settings = () => import('@views/profile/settings')
-
-// 列表页组件
-const QueryTable = () => import('@views/list/table')
-const CardList = () => import('@views/list/card-list')
-const BasicList = () => import('@views/list/basic-list')
-
-// 表单页组件
-const StandardForm = () => import('@views/form/standard-form')
-const StepForm = () => import('@views/form/step-form')
-
-// 用于测试的组件
-const Jser = () => import('@views/test/jser')
-
-// 权限测试组件
-const AdminOnly = () => import('@views/permission/admin-only')
-const OpOnly = () => import('@views/permission/op-only')
-const AdminAndOp = () => import('@views/permission/admin-and-op')
-const All = () => import('@views/permission/all')
-
 
 // 应用内组件
 const FileList = () => import('@views/file-list')

@@ -1,6 +1,6 @@
 <template>
   <div class="co-share">
-    <fullscreen v-model="fullscreen">
+    <fullscreen v-model="fullscreen" class="fullscreen-usage">
       <a-card :tab-list="tabList" :active-tab-key="activeKey" @tabChange="onTabChange">
         <div v-if="activeKey === 'own-share' || activeKey === 'subscribe'"
           style="margin-bottom: 16px;text-align: right;">
@@ -243,6 +243,10 @@ export default {
 .co-share {
   padding: 24px;
   height: 100%;
+  background-color: rgb(240, 242, 245);
+}
+
+.fullscreen-usage {
   background-color: rgb(240, 242, 245);
 }
 

@@ -6,10 +6,9 @@
 
 <script>
 export default {
-  name: 'full-screen',
+  name: 'fullscreen',
   model: {
-    prop: 'value',
-    event: 'fullscreen'
+    prop: 'value'
   },
   props: {
     value: {
@@ -18,8 +17,8 @@ export default {
     }
   },
   mounted() {
-    const listener = document.addEventListener('fullscreenchange', () => {
-      this.$emit('change', this.value)
+    const listener = document.addEventListener('fullscreenchange', (event) => {
+      this.$emit('change', this.value, event)
     })
     this.$on('hook:destroyed', () => {
       document.removeEventListener('fullscreenchange', listener)
@@ -31,7 +30,9 @@ export default {
         this.$refs.fullScreenRef?.requestFullscreen()
       }
       else {
-        document.exitFullscreen()
+        if (document.fullscreenElement) {
+          document.exitFullscreen()
+        }
       }
     }
   }
@@ -42,6 +43,5 @@ export default {
 .fullscreen:-webkit-full-screen {
   width: 100%;
   height: 100%;
-  background-color: #fff;
 }
 </style>
