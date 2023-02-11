@@ -16,7 +16,7 @@ const Favor = () => import('@views/favor')
 const Share = () => import('@views/share')
 const Bin = () => import('@views/bin')
 const CoShare = () => import('@views/co-share')
-
+const UserSettings = () => import('@views/profile/settings')
 
 
 
@@ -239,6 +239,27 @@ export const constantRouterMap = [
         component: Bin,
         meta: {
           module: '回收站'
+        }
+      }
+    ]
+  },
+  {
+    name: 'UserCenter',
+    path: '/user-center',
+    component: Layout,
+    redirect: '/user-center',
+    meta: {
+      title: '个人中心',
+      addBreadcrumb: true,
+      hasSubMenu: false,
+      icon: 'setting'
+    },
+    children: [
+      {
+        path: '/user-center',
+        component: UserSettings,
+        meta: {
+          module: '个人中心'
         }
       }
     ]
