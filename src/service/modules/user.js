@@ -5,7 +5,9 @@ const prefix = '/api'
 const UserAPI = {
   LoginAPI: prefix + '/user/login',
   RegisterAPI: prefix + '/user/register',
-  UserExistCheckAPI: prefix + '/user/register/n/'
+  UserExistCheckAPI: prefix + '/user/register/n/',
+  UploadAvatarAPI: prefix + '/user/profile/',
+  GetUserInfoAPI: prefix + '/user/'
 }
 
 // 登录
@@ -31,8 +33,27 @@ export const checkUserExistRequest = (payload) => {
   })
 }
 
+// 上传用户头像
+export const uploadUserAvatarRequest = (payload) => {
+  const formData = new FormData()
+  formData.append('file', payload.file)
+  return request.post({
+    url: UserAPI.UploadAvatarAPI,
+    data: formData
+  })
+}
+
+// 获取用户信息
+export const getUserInfoRequest = (payload) => {
+  return request.get({
+    url: UserAPI.GetUserInfoAPI + payload.username
+  })
+}
+
 export default {
   appLoginRequest,
   appRegisterRequest,
-  checkUserExistRequest
+  checkUserExistRequest,
+  uploadUserAvatarRequest,
+  getUserInfoRequest
 }

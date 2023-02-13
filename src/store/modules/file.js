@@ -100,6 +100,10 @@ const file = {
     async unCoShare(context, payload) {
       const response = await fileService.unCoShareRequest(payload)
       return response
+    },
+    async getFolderStatus(context, payload) {
+      const response = await fileService.getFolderStatusRequest(payload)
+      return response
     }
   }
 }

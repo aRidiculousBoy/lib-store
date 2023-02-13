@@ -60,3 +60,13 @@ export function uuid() {
 export function setPageTitle(title) {
   document.title = title
 }
+
+export function getCookie(key) {
+  const cookie = document.cookie.split(';').map(entry => {
+    return entry.split('=')
+  }).map(array => ({
+    key: array[0],
+    value: array[1]
+  }))
+  return cookie.find(entry => entry.key === key)?.value
+}

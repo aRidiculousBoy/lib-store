@@ -5,7 +5,9 @@ const user = {
   state: {
     token: undefined,
     roles: [],
-    username: undefined
+    username: undefined,
+    avatar: undefined,
+    intro: undefined
   },
   mutations: {
     setRoles(state, roles) {
@@ -18,6 +20,12 @@ const user = {
       state.token = token
       localStorage.setItem('token', token)
     },
+    setAvatar(state, avatar) {
+      state.avatar = 'data:image/*;base64,' + avatar
+    },
+    setIntro(state, intro) {
+      state.intro = intro
+     },
     clearToken(state) {
       state.token = undefined
       localStorage.removeItem('token')
@@ -31,6 +39,7 @@ const user = {
       }, false)
       context.commit('setUsername', response.userName)
       context.commit('setToken', response.token)
+
       return response
     },
     async appLogout(context, payload) {
@@ -40,8 +49,19 @@ const user = {
       const response = await userService.appRegisterRequest(payload)
       return response
     },
-    async checkUserIsExist(context,payload) {
+    async checkUserIsExist(context, payload) {
       const response = await userService.checkUserExistRequest(payload)
+      return response
+    },
+    async uploadUserAvatar(context, payload) {
+      const response = await userService.uploadUserAvatarRequest(payload)
+      return response
+    },
+    async getUserInfo(context, payload) {
+      const response = await userService.getUserInfoRequest(payload)
+      context.commit('setUsername', response.userName)
+      context.commit('setAvatar', response.profile)
+      context.commit('setIntro', response.intro)
       return response
     }
   }

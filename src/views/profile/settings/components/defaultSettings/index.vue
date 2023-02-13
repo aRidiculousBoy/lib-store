@@ -17,19 +17,20 @@
         </a-form-model>
       </div>
       <div class="upload-content">
-        <a-avatar :src="kenan" :size="96" />
-        <div style="margin-top: 18px">
+        <a-avatar :src="userAvatar" :size="256" />
+        <div style="margin-top: 32px">
           <a-button icon="cloud-upload" @click="handleUpdateAvatar">更换头像</a-button>
         </div>
       </div>
     </div>
-    <avatar-editor ref="avatarEditorRef"/>
+    <avatar-editor ref="avatarEditorRef" />
   </div>
 </template>
 
 <script>
 import kenan from '@assets/images/kenan.jpg'
 import AvatarEditor from './components/avatar-editor'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'DefaultSetting',
@@ -85,8 +86,23 @@ export default {
   },
   methods: {
     handleUpdateAvatar() {
-      this.$refs.avatarEditorRef?.open()
-    }
+      const callback = () => {
+        const payload = {
+          username: this.username
+        }
+        this.getUserInfo(payload)
+      }
+      this.$refs.avatarEditorRef?.open(callback)
+    },
+    ...mapActions({
+      getUserInfo: 'user/getUserInfo'
+    }),
+  },
+  computed: {
+    ...mapState({
+      username: state => state.user.username,
+      userAvatar: state => state.user.avatar
+    })
   }
 }
 </script>

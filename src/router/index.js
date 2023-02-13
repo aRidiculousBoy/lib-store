@@ -4,7 +4,9 @@ import routes from '@/routes'
 import configs from '@/configs'
 import authorization from '@/utils/authorization'
 import { appTitle } from '@/constants'
-import { setPageTitle } from '@/utils/utils'
+import { setPageTitle, getCookie } from '@/utils/utils'
+import userService from '@/service/modules/user'
+import store from "@/store"
 
 Vue.use(VueRouter)
 
@@ -17,6 +19,15 @@ VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch((err) => err)
 }
 
+const getUserDetails = async () => {
+  const username = getCookie('userName')
+  if (username) {
+    const payload = {
+      username
+    }
+    store.dispatch('user/getUserInfo', payload)
+  }
+}
 
 
 const router = new VueRouter({
@@ -37,6 +48,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // 反之优先获取用户信息，再进行跳转 
       // 获取用户信息...
+      getUserDetails()
       next()
     }
   }
@@ -44,7 +56,7 @@ router.beforeEach((to, from, next) => {
   else {
     if (configs.whiteList.includes(to.path) || to.meta.notRequireLogin) {
       next()
-    } 
+    }
     // 反之重定向到登录页面
     else {
       next('/login')

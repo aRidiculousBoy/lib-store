@@ -5,7 +5,6 @@
         <div class="logo">
           <span class="app-name" :title="appTitle">{{ appTitle }}</span>
         </div>
-
         <sidebar :collapsed="collapsed" />
       </a-layout-sider>
       <a-layout class="layout-content">
@@ -15,11 +14,11 @@
           <breadcrumbs />
           <div class="header-right">
             <div class="content">
-              <span class="username">a Ridiculous Boy</span>
-              <a-dropdown>
-                <a-avatar :src="kenan" :size="40" style="cursor:pointer" />
+              <span class="username">{{ username }}</span>
+              <a-dropdown placement="bottomCenter">
+                <a-avatar :src="avatar" :size="40" style="cursor:pointer" />
                 <a-menu slot="overlay" @click="handleUserMenuClick">
-                  <a-menu-item key="faq">
+                  <a-menu-item key="help">
                     帮助中心
                   </a-menu-item>
                   <a-menu-item key="user-setting">
@@ -51,10 +50,13 @@
 import Sidebar from './sidebar.vue'
 import Breadcrumbs from './breadcrumbs.vue'
 import { mapState } from 'vuex'
-import kenan from '@assets/images/kenan.jpg'
 import { appTitle } from '@/constants'
 
-
+const clickMap = {
+  logout: 'handleLogout',
+  'user-setting': 'handleSetting',
+  help: 'handleHelp'
+}
 
 export default {
   name: 'Layout',
@@ -71,7 +73,6 @@ export default {
   data() {
     return {
       collapsed: false,
-      kenan,
       appTitle
     }
   },
@@ -80,16 +81,23 @@ export default {
       this.$router.push('/')
     },
     handleUserMenuClick({ key }) {
-      if (key === 'logout') {
-        this.$store.dispatch('user/appLogout').then(() => {
-          this.$router.push('/login')
-        })
-      }
-    }
+      const runner = this[clickMap[key]]
+      runner && runner()
+    },
+    handleLogout() {
+      this.$store.dispatch('user/appLogout').then(() => {
+        this.$router.push('/login')
+      })
+    },
+    handleSetting() { 
+      this.$router.push('/user-center')
+    },
+    handleHelp() { }
   },
   computed: {
     ...mapState({
-      username: (state) => state.user.username
+      username: (state) => state.user.username,
+      avatar: (state) => state.user.avatar
     })
   }
 }

@@ -2,7 +2,8 @@
   <div class="avatar-editor">
     <a-modal v-model="visible" title="修改图像" :width="792" :footer="null">
       <div class="preview">
-        <vueCropper ref="cropperRef" v-bind="cropper.option" class="cropper" @realTime="handleRealTime">
+        <vueCropper ref="cropperRef" v-bind="cropper.option" style="width: 376px;height: 350px"
+          @realTime="handleRealTime">
         </vueCropper>
         <div class="real-time">
           <a-avatar :src="avatarSrc" :size="208" />
@@ -21,10 +22,18 @@
           </a-space>
         </div>
         <div class="save">
-          <a-button type="primary">保存</a-button>
+          <a-space>
+            <a-button @click="handlePreview">预览</a-button>
+            <a-button type="primary" @click="handleUploadAvatar" :loading="submitting">保存</a-button>
+          </a-space>
         </div>
       </div>
     </a-modal>
+    <div class="model" v-show="model">
+      <div class="model-show" @click="model = false">
+        <img :src="modelSrc" alt="" @click="model = false">
+      </div>
+    </div>
   </div>
 </template>
 
@@ -48,14 +57,21 @@ export default {
           original: false
         }
       },
-      avatarSrc: null
+      avatarSrc: null,
+      model: false,
+      modelSrc: null,
+      file: null,
+      callback: undefined,
+      submitting: false
     }
   },
   components: {
     VueCropper
   },
   methods: {
-    open() {
+    open(callback) {
+      this.callback = callback
+      this.clear()
       this.visible = true
     },
     close() {
@@ -63,21 +79,40 @@ export default {
     },
     handleUpload(file) {
     },
+    handleUploadAvatar() {
+      this.submitting = true
+      this.$refs.cropperRef?.getCropBlob(data => {
+        const file = new File([data], 'avatar')
+        const payload = {
+          file
+        }
+        this.$store.dispatch('user/uploadUserAvatar', payload).then(response => {
+          this.callback && this.callback()
+          this.$message.success('头像更新成功')
+        }).finally(() => {
+          this.submitting = false
+          this.close()
+        })
+      })
+    },
     handleChange(e) {
       const file = e.file.originFileObj
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onloadend = (event) => {
-        const { result } = event.target
-        this.cropper.option.img = result
+      if (this.cropper.option.img) {
+        window.URL.revokeObjectURL(this.cropper.option.img)
       }
+      this.cropper.option.img = window.URL.createObjectURL(file)
     },
     handleRealTime: throttle(function () {
       if (!this.cropper.option.img) {
         return false
       }
       this.$refs.cropperRef?.getCropBlob(data => {
-        this.avatarSrc = URL.createObjectURL(data)
+        const binaryData = []
+        binaryData.push(data)
+        if (this.avatarSrc) {
+          window.URL.revokeObjectURL(this.avatarSrc)
+        }
+        this.avatarSrc = window.URL.createObjectURL(new Blob(binaryData))
       })
     }, 100),
     handleScale(value) {
@@ -88,17 +123,34 @@ export default {
     },
     handleRotateRight() {
       this.$refs.cropperRef?.rotateRight()
+    },
+    handlePreview() {
+      if (!this.cropper.option.img) {
+        return false
+      }
+      this.$refs.cropperRef?.getCropBlob(data => {
+        const binaryData = []
+        binaryData.push(data)
+        if (this.modelSrc) {
+          window.URL.revokeObjectURL(this.modelSrc)
+        }
+        this.modelSrc = window.URL.createObjectURL(new Blob(binaryData))
+        this.model = true
+      })
+    },
+    clear() {
+      window.URL.revokeObjectURL(this.avatarSrc)
+      window.URL.revokeObjectURL(this.cropper.option.img)
+      window.URL.revokeObjectURL(this.modelSrc)
+      this.cropper.option.img = null
+      this.avatarSrc = null
+      this.modelSrc = null
     }
   }
 }
 </script>
 
 <style scoped lang="less">
-.cropper {
-  width: 376px;
-  height: 350px;
-}
-
 .preview {
   display: flex;
   align-items: center;
@@ -131,5 +183,42 @@ export default {
     flex: 1;
     text-align: center;
   }
+}
+
+.model {
+  position: fixed;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.model-show {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+}
+
+.model img {
+  display: block;
+  margin: auto;
+  max-width: 80%;
+  width: auto;
+  user-select: none;
+  background-position: 0px 0px, 10px 10px;
+  background-size: 20px 20px;
+  background-image: linear-gradient(45deg,
+      #eee 25%,
+      transparent 25%,
+      transparent 75%,
+      #eee 75%,
+      #eee 100%),
+    linear-gradient(45deg, #eee 25%, white 25%, white 75%, #eee 75%, #eee 100%);
 }
 </style>

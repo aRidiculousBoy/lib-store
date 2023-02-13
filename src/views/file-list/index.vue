@@ -49,6 +49,7 @@
     <file-sharer ref="fileSharerRef" />
     <file-mover ref="fileMoverRef" />
     <file-co-sharer ref="fileCoSharerRef" />
+    <pdf-viewer ref="pdfViewerRef" />
   </div>
 </template>
 
@@ -63,6 +64,7 @@ import FileSharer from './components/file-sharer'
 import FileBreadcrumb from './components/breadcrumb'
 import FileMover from './components/file-mover'
 import FileCoSharer from './components/file-co-sharer'
+import PdfViewer from './components/pdf-viewer'
 
 import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
@@ -113,7 +115,8 @@ export default {
     FileSharer,
     FileBreadcrumb,
     FileMover,
-    FileCoSharer
+    FileCoSharer,
+    PdfViewer
   },
   methods: {
     async getPageData(parentId) {
@@ -265,8 +268,19 @@ export default {
     async handleDownload(payload) {
       const { type } = payload
       if (type === 'folder') {
-        console.log(payload)
-        this.$store.dispatch('file/downloadFile', payload)
+        const { id } = payload
+        const isEmpty = await this.$store.dispatch('file/getFolderStatus', {
+          id
+        })
+        if (!isEmpty) {
+          this.$store.dispatch('file/downloadFile', payload)
+        }
+        else {
+          this.$notification.error({
+            message: '操作被拦截',
+            description: '该文件夹内无实际意义资源，为防止报错，已拦截下载操作，望见谅。'
+          })
+        }
       }
       else {
         this.$store.dispatch('file/downloadFile', payload)
@@ -327,6 +341,15 @@ export default {
       }
     },
     handlePreview(payload) {
+      const { extension } = payload
+      if (extension === '.pdf') {
+        this.$refs.pdfViewerRef?.open(payload)
+      }
+      else if (extension === '.mp4') {
+      }
+      else {
+
+      }
       console.log('预览逻辑实现')
     },
     handleShare(payload) {

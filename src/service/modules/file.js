@@ -27,7 +27,8 @@ const FILEAPI = {
   SubscribeAPI: prefix + '/user/resource/shared/public/sub/',
   UnSubScribeAPI: prefix + '/user/resource/sub/',
   TransferPublicAPI: prefix + '/user/resource/shared/public/transfer/',
-  UnCoShareAPI: prefix + '/user/resource/shared/'
+  UnCoShareAPI: prefix + '/user/resource/shared/',
+  FolderIsEmptyAPI: prefix + '/user/resource/folder/status/'
 }
 
 // 获取用户文件列表
@@ -231,6 +232,15 @@ export const unCoShareRequest = (payload) => {
   })
 }
 
+
+// 判断文件夹是否为空
+export const getFolderStatusRequest = (payload) => {
+  return request.get({
+    url: FILEAPI.FolderIsEmptyAPI + payload.id
+  })
+}
+
+
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -255,5 +265,6 @@ export default {
   subscribeRequest,
   unSubscribeRequest,
   transferPublicRequest,
-  unCoShareRequest
+  unCoShareRequest,
+  getFolderStatusRequest
 }

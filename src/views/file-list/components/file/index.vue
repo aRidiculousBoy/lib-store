@@ -129,7 +129,8 @@ export default {
       const payload = {
         type,
         id,
-        extension
+        extension,
+        name
       }
       this.$emit('click', payload)
     },
