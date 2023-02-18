@@ -20,6 +20,7 @@
     "hash-wasm": "^4.9.0",
     "lodash": "^4.17.21",
     "p-limit": "^3.1.0",
+    "video.js": "^8.0.4",
     "vue": "^2.6.11",
     "vue-contextmenujs": "^1.4.9",
     "vue-cropper": "^0.5.8",

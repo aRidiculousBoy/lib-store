@@ -4,7 +4,8 @@ const prefix = '/api'
 
 const ShareAPI = {
   GetShareAPI: prefix + '/user/resource/share/',
-  UnShareAPI: prefix + '/user/resource/share/'
+  UnShareAPI: prefix + '/user/resource/share/',
+  GetDeepResourceAPI: prefix + '/user/resource/share/detail/'
 }
 
 // 获取用户分享资源
@@ -22,9 +23,14 @@ export const unShareRequest = (payload) => {
   })
 }
 
-
+export const getDeepResourceRequest = (payload) => {
+  return request.get({
+    url: ShareAPI.GetDeepResourceAPI + payload.id
+  })
+}
 
 export default {
   getShareResourceRequest,
-  unShareRequest
+  unShareRequest,
+  getDeepResourceRequest
 }

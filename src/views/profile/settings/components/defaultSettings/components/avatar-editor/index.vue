@@ -80,6 +80,9 @@ export default {
     handleUpload(file) {
     },
     handleUploadAvatar() {
+      if (!this.cropper.option.img) {
+        return false
+      }
       this.submitting = true
       this.$refs.cropperRef?.getCropBlob(data => {
         const file = new File([data], 'avatar')

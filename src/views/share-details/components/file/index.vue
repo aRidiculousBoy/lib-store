@@ -25,6 +25,10 @@ export default {
     },
     extension: {
       type: String,
+    },
+    id: {
+      type: [String, Number],
+      required: true
     }
   },
   data() {

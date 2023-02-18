@@ -5,7 +5,6 @@ import configs from '@/configs'
 import authorization from '@/utils/authorization'
 import { appTitle } from '@/constants'
 import { setPageTitle, getCookie } from '@/utils/utils'
-import userService from '@/service/modules/user'
 import store from "@/store"
 
 Vue.use(VueRouter)
@@ -48,8 +47,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // 反之优先获取用户信息，再进行跳转 
       // 获取用户信息...
-      getUserDetails()
-      next()
+      getUserDetails().then(next)
     }
   }
   // 未登录

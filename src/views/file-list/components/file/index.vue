@@ -125,12 +125,13 @@ export default {
       return false;
     },
     handleClick() {
-      const { type, id, extension, name } = this.$props
+      const { type, id, extension, name, fileId } = this.$props
       const payload = {
         type,
         id,
         extension,
-        name
+        name,
+        fileId
       }
       this.$emit('click', payload)
     },

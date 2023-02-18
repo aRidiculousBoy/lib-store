@@ -1,3 +1,4 @@
 export const SUCCESS_CODE = 200
+export const ERROR_FETCH_TEXT = '提取码错误！'
 
 export const appTitle = 'Lib Store'

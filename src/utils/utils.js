@@ -62,7 +62,7 @@ export function setPageTitle(title) {
 }
 
 export function getCookie(key) {
-  const cookie = document.cookie.split(';').map(entry => {
+  const cookie = document.cookie.split('; ').map(entry => {
     return entry.split('=')
   }).map(array => ({
     key: array[0],

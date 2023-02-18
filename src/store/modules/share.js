@@ -20,6 +20,10 @@ const shareStore = {
         return context.dispatch('unShareResource', parameters)
       })
       return await Promise.all(tasks)
+    },
+    async getDeepResource(context, payload) {
+      const response = await shareService.getDeepResourceRequest(payload)
+      return response
     }
   }
 }

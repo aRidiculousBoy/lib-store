@@ -1,6 +1,14 @@
 <template>
   <div class="share-details-page">
-    <a-layout id="components-layout-demo-top-side-2">
+    <div class="validator" v-if="!fetchStatus">
+      <span class="app-title app-text">Lib-Store</span>
+      <a-card class="fetch-action">
+        <span class="validator-text">请输入提取码：</span>
+        <a-input-password v-model="fetchCode" style="width: 100%"></a-input-password>
+        <a-button type="primary" @click="handleFetch" :loading="fetching">提取文件</a-button>
+      </a-card>
+    </div>
+    <a-layout v-else id="components-layout-demo-top-side-2">
       <a-layout-header class="header">
         <div class="view">
           <div class="logo" />
@@ -18,8 +26,12 @@
               </div>
               <a-divider></a-divider>
               <div class="list">
-                <file v-for="file in useFileList" :key="file.shareName" v-bind="file" @transfer="handleTransfer"
-                  @click="handleFileClick" @download="handleDownload" />
+                <a-row :gutter="[4, 16]" v-for="row in rowLength" :key="row">
+                  <a-col :span="4" v-for="file in useFileList.slice((row - 1) * 6, row * 6)" :key="file.id">
+                    <file v-bind="file" @transfer="handleTransfer" @click="handleFileClick"
+                      @download="handleDownload" />
+                  </a-col>
+                </a-row>
               </div>
             </a-card>
             <a-card style="flex: 1">
@@ -52,6 +64,7 @@
 
 <script>
 import kenanJpg from '@/assets/images/kenan.jpg'
+import { ERROR_FETCH_TEXT } from '@/constants'
 import { appTitle } from '@/constants'
 
 import File from './components/file'
@@ -63,29 +76,62 @@ export default {
     File,
     FileSaver
   },
+  created() {
+    console.log(this.$route.params)
+  },
   data() {
     return {
       list: [],
       loading: false,
       error: false,
+      fetchCode: undefined,
+      fetching: false,
       kenanJpg,
-      appTitle
+      appTitle,
+      fetchStatus: 0
     }
   },
   methods: {
-    getShareResource(value) {
-      this.loading = true
-      const payload = {
-        type: 1,
-        name: value
+    getDeepResource() {
+      const shareName = this.$route.params.shareName
+      const id = this.$route.params.parentId
+      if (shareName && id) {
+        const payload = {
+          id
+        }
+        this.$store.dispatch('share/getDeepResource', payload).then(response => {
+          this.list = this.clickParser(response)
+        })
       }
-      this.$store.dispatch('share/getShareResource', payload).then(response => {
-        this.list = [response]
-      }).catch(() => {
-        this.error = true
-      }).finally(() => {
-        this.loading = false
-      })
+      else {
+        this.handleFetch()
+      }
+    },
+    handleFetch() {
+      const isValid = this.fetchCode && this.fetchCode !== '' && this.fetchCode?.trim() !== ''
+      if (isValid) {
+        this.fetching = true
+        const shareName = this.$route.params.shareName
+        const payload = {
+          name: shareName,
+          type: 1,
+          fetchCode: this.fetchCode
+        }
+        this.$store.dispatch('share/getShareResource', payload).then(response => {
+          if (response === ERROR_FETCH_TEXT) {
+            this.$message.error('提取码错误')
+          }
+          else {
+            this.fetchStatus = 1
+            this.list = [response]
+          }
+        }).finally(() => {
+          this.fetching = false
+        })
+      }
+      else {
+        this.$message.error('验证码不能为空')
+      }
     },
     handleTransfer(file) {
       this.$refs.fileSaverRef?.open(file)
@@ -93,21 +139,34 @@ export default {
     handleFileClick(payload) {
       const { type, id } = payload
       if (type === 'folder') {
-
+        const shareName = this.$route.params.shareName
+        const route = `/share-details/${shareName}/folder/${id}`
+        this.$router.push({
+          path: route,
+          query: Date.now()
+        })
       } else {
         this.handlePreview(payload)
       }
     },
     handleDownload(file) {
       this.$store.dispatch('file/downloadShare', file)
-    }
-  },
-  watch: {
-    '$route.params.shareName': {
-      immediate: true,
-      handler(value) {
-        this.getShareResource(value)
-      }
+    },
+    clickParser(data) {
+      let list = [...data.folders, ...data.resources]
+      list = list.map(file => {
+        return {
+          id: file.id || file.folderId,
+          shareName: file.folderName || file.fileName,
+          originalName: file.folderName || file.fileName,
+          type: file.folderId ? 0 : 1,
+          extension: file.folderId ? 'folder' : file.fileType
+        }
+      })
+      return list
+    },
+    handlePreview() {
+      console.log('预览逻辑实现')
     }
   },
   computed: {
@@ -117,9 +176,20 @@ export default {
           originalName: file.originalName,
           shareName: file.shareName,
           type: file.type === 1 ? 'file' : 'folder',
-          extension: file.type === 1 ? '.mp4' : 'folder'
+          extension: file.type === 1 ? file.extension : 'folder',
+          id: file.userResourceId || file.id
         }
       })
+    },
+    rowLength() {
+      return Math.ceil(this.list.length / 6)
+    },
+  },
+  watch: {
+    '$route.params': {
+      handler(value) {
+        this.getDeepResource()
+      }
     }
   }
 }
@@ -133,6 +203,21 @@ export default {
 .share-details-page {
   width: 100%;
   height: 100%;
+  background-color: #f0f2f5;
+}
+
+.validator {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-16%);
+
+  .validator-text {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
 }
 
 #components-layout-demo-top-side-2 .logo {
@@ -164,6 +249,20 @@ export default {
 
 .user-name {
   font-size: 28px;
+}
+
+.app-text {
+  color: #000;
+  padding-bottom: 24px;
+}
+
+.fetch-action {
+  width: 20%;
+  padding: 16px;
+}
+
+.fetch-action * {
+  margin: 8px 0;
 }
 </style>
 

@@ -108,11 +108,12 @@ export const constantRouterMap = [
     component: RouteView,
     children: [
       {
-        path: '/share-details/:shareName',
+        path: '/share-details/:shareName/:folder?/:parentId*',
         component: ShareDetails,
         meta: {
           notRequireLogin: true,
-          module: '文件分享'
+          module: '文件分享',
+          defineResponseInterceptor: true
         }
       }
     ]
