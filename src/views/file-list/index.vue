@@ -50,6 +50,7 @@
     <file-mover ref="fileMoverRef" />
     <file-co-sharer ref="fileCoSharerRef" />
     <pdf-viewer ref="pdfViewerRef" />
+    <video-player ref="videoPlayerRef" />
   </div>
 </template>
 
@@ -65,14 +66,18 @@ import FileBreadcrumb from './components/breadcrumb'
 import FileMover from './components/file-mover'
 import FileCoSharer from './components/file-co-sharer'
 import PdfViewer from './components/pdf-viewer'
+import VideoPlayer from './components/video-player'
 
 import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
 import { uuid } from '@/utils/utils'
 import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
+import { VIDEO_TYPES } from '@/constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
 import axios from 'axios'
+
+
 
 const limit = pLimit(concurrent)
 
@@ -116,7 +121,8 @@ export default {
     FileBreadcrumb,
     FileMover,
     FileCoSharer,
-    PdfViewer
+    PdfViewer,
+    VideoPlayer
   },
   methods: {
     async getPageData(parentId) {
@@ -345,12 +351,17 @@ export default {
       if (extension === '.pdf') {
         this.$refs.pdfViewerRef?.open(payload)
       }
-      else if (extension === '.mp4') {
+      else if (VIDEO_TYPES.includes(extension)) {
+        const parameters = {
+          id: payload.id
+        }
+        this.$store.dispatch('file/getVideoLocation', parameters).then(response => {
+          this.$refs.videoPlayerRef?.open(response, payload.name)
+        })
       }
       else {
-
+        console.log('预览逻辑')
       }
-      console.log('预览逻辑实现')
     },
     handleShare(payload) {
       this.$refs.fileSharerRef?.open(payload)

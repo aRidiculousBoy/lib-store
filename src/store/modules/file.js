@@ -104,6 +104,10 @@ const file = {
     async getFolderStatus(context, payload) {
       const response = await fileService.getFolderStatusRequest(payload)
       return response
+    },
+    async getVideoLocation(context, payload) {
+      const response = await fileService.getVideoLocationRequest(payload)
+      return response
     }
   }
 }

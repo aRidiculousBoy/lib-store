@@ -23,6 +23,14 @@ module.exports = {
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/v': {
+        target: 'http://175.24.164.138:8089',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/v': ''
+        }
       }
     }
   },

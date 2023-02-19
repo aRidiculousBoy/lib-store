@@ -2,6 +2,7 @@ import request from '../index'
 import { saveAs } from 'file-saver'
 
 const prefix = '/api'
+const videoPrefix = '/v/video'
 
 const FILEAPI = {
   GetFileAPI: prefix + '/user/resource/',
@@ -28,7 +29,8 @@ const FILEAPI = {
   UnSubScribeAPI: prefix + '/user/resource/sub/',
   TransferPublicAPI: prefix + '/user/resource/shared/public/transfer/',
   UnCoShareAPI: prefix + '/user/resource/shared/',
-  FolderIsEmptyAPI: prefix + '/user/resource/folder/status/'
+  FolderIsEmptyAPI: prefix + '/user/resource/folder/status/',
+  GetVideoLocationAPI: prefix + '/user/resource/video/'
 }
 
 // 获取用户文件列表
@@ -240,6 +242,13 @@ export const getFolderStatusRequest = (payload) => {
   })
 }
 
+// 获取视频资源的路径
+export const getVideoLocationRequest = (payload) => {
+  return request.get({
+    url: FILEAPI.GetVideoLocationAPI + payload.id
+  })
+}
+
 
 export default {
   getUserFilesRequest,
@@ -266,5 +275,6 @@ export default {
   unSubscribeRequest,
   transferPublicRequest,
   unCoShareRequest,
-  getFolderStatusRequest
+  getFolderStatusRequest,
+  getVideoLocationRequest
 }
