@@ -89,7 +89,7 @@ export default {
         this.$router.push('/login')
       })
     },
-    handleSetting() { 
+    handleSetting() {
       this.$router.push('/user-center')
     },
     handleHelp() { }

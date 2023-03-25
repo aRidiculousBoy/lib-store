@@ -108,7 +108,19 @@ const file = {
     async getVideoLocation(context, payload) {
       const response = await fileService.getVideoLocationRequest(payload)
       return response
-    }
+    },
+    async collect(context,payload) {
+      const response = await fileService.collectRequest(payload)
+      return response
+    },
+    async getCollectList(context,payload) {
+      const response = await fileService.getCollectListRequest(payload)
+      return response
+    },
+    async unCollect(context,payload) {
+      const response = await fileService.unCollectRequest(payload)
+      return response
+    },
   }
 }
 

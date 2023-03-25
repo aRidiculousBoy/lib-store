@@ -29,7 +29,8 @@
               @moveBin="handleMoveBin" @download="handleDownload" @preview="handlePreview" @share="handleShare"
               @dragstart.native="handleDragStart(file, $event)" @dragover.native="handleDragOver(file, $event)"
               @drop.native="handleDrop(file, $event)" @dragleave.native="handleDragLeave(file)" @move="handleMove"
-              :class="{ 'high-light': file.id === activeId }" @coShare="handleCoShare" />
+              :class="{ 'high-light': file.id === activeId }" @coShare="handleCoShare" @favor="handleFavor"
+              @unFavor="handleUnFavor" />
           </a-col>
         </a-row>
       </div>
@@ -72,7 +73,7 @@ import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt } from './utils'
 import { uuid } from '@/utils/utils'
 import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
-import { VIDEO_TYPES } from '@/constants'
+import { VIDEO_TYPES, IMAGE_TYPES } from '@/constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
 import axios from 'axios'
@@ -90,6 +91,10 @@ export default {
         fileContext.isFinished = true
         fileContext.isUploading = false
         this.getPageData(this.$route.params.parentId)
+        if (IMAGE_TYPE.includes(fileContext.ext)) {
+          // 上传缩略图
+
+        }
       }
       fileContext.successChunks.push(response.chunkNum)
       fileContext.percentage = Math.ceil((fileContext.successChunks.length / fileContext.chunkList.length) * 100)
@@ -126,6 +131,9 @@ export default {
   },
   methods: {
     async getPageData(parentId) {
+      if (!parentId) {
+        parentId = this.$route.params.parentId
+      }
       this.loading = true
       const payload = {
         parentId
@@ -462,7 +470,15 @@ export default {
     },
     handleCoShare(payload) {
       this.$refs.fileCoSharerRef?.open(payload)
-    }
+    },
+    handleFavor(payload) {
+      this.$store.dispatch('file/collect', payload).then(response => {
+        this.getPageData()
+      })
+    },
+    handleUnFavor(payload) {
+      this.$store.dispatch('file/unCollect', payload).then(() => { this.getPageData() })
+    },
   },
   computed: {
     size() {

@@ -7,7 +7,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'file',
   props: {
@@ -45,10 +44,6 @@ export default {
     },
     fileId: {
       type: String
-    },
-    collect: {
-      type: Boolean,
-      required: true
     }
   },
   inject: ['typeMapper'],
@@ -87,11 +82,11 @@ export default {
             }
           },
           {
-            label: this.collect ? '取消收藏' : '收藏',
+            label: "取消收藏",
             divided: true,
             customClass: 'context-menu-item',
             onClick: () => [
-              this.collect ? this.handleUnFavor() : this.handleFavor()
+              this.handleUnFavor()
             ]
           },
           {
@@ -192,13 +187,6 @@ export default {
         ...this.$props
       }
       this.$emit('coShare', payload)
-    },
-    handleFavor() {
-      const payload = {
-        id: this.id,
-        type: this.type
-      }
-      this.$emit('favor', payload)
     },
     handleUnFavor() {
       const payload = {

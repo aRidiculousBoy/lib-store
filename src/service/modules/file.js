@@ -30,7 +30,10 @@ const FILEAPI = {
   TransferPublicAPI: prefix + '/user/resource/shared/public/transfer/',
   UnCoShareAPI: prefix + '/user/resource/shared/',
   FolderIsEmptyAPI: prefix + '/user/resource/folder/status/',
-  GetVideoLocationAPI: prefix + '/user/resource/video/'
+  GetVideoLocationAPI: prefix + '/user/resource/video/',
+  CollectAPI: prefix + '/user/resource/collet/',
+  GetCollectListAPI: prefix + '/user/resource/collet',
+  UnCollectAPI: prefix + '/user/resource/collet'
 }
 
 // 获取用户文件列表
@@ -249,6 +252,34 @@ export const getVideoLocationRequest = (payload) => {
   })
 }
 
+// 收藏
+export const collectRequest = (payload) => {
+  return request.post({
+    url: FILEAPI.CollectAPI,
+    data: {
+      resourceId: payload.id,
+      typeId: payload.type === 'folder' ? 0 : 1
+    }
+  })
+}
+
+// 获取收藏列表
+export const getCollectListRequest = (payload) => {
+  return request.get({
+    url: FILEAPI.CollectAPI
+  })
+}
+
+// 取消收藏
+export const unCollectRequest = (payload) => {
+  return request.delete({
+    url: FILEAPI.UnCollectAPI,
+    data: {
+      resourceId: payload.id,
+      typeId: payload.type === 'folder' ? 0 : 1
+    }
+  })
+}
 
 export default {
   getUserFilesRequest,
@@ -276,5 +307,8 @@ export default {
   transferPublicRequest,
   unCoShareRequest,
   getFolderStatusRequest,
-  getVideoLocationRequest
+  getVideoLocationRequest,
+  collectRequest,
+  getCollectListRequest,
+  unCollectRequest
 }

@@ -5,3 +5,4 @@ export const appTitle = 'Lib Store'
 
 export const VIDEO_TYPES = ['.mp4']
 
+export const IMAGE_TYPES = ['.jpg','.jpeg']
