@@ -3,8 +3,10 @@
     <a-layout id="components-layout-demo-custom-trigger">
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible :width="240">
         <div class="logo">
+          <img :src="Logo" style="width: 72px;transform:scale(2,2.2) translateY(6px);">
           <span class="app-name" :title="appTitle">{{ appTitle }}</span>
         </div>
+        
         <sidebar :collapsed="collapsed" />
       </a-layout-sider>
       <a-layout class="layout-content">
@@ -51,6 +53,7 @@ import Sidebar from './sidebar.vue'
 import Breadcrumbs from './breadcrumbs.vue'
 import { mapState } from 'vuex'
 import { appTitle } from '@/constants'
+import Logo from '@/assets/svg/logo.svg'
 
 const clickMap = {
   logout: 'handleLogout',
@@ -72,8 +75,9 @@ export default {
   },
   data() {
     return {
-      collapsed: false,
-      appTitle
+      appTitle,
+      Logo,
+      collapsed: false
     }
   },
   methods: {
@@ -141,7 +145,10 @@ export default {
 }
 
 #components-layout-demo-custom-trigger .logo {
-  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
   text-align: center;

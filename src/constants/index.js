@@ -5,4 +5,10 @@ export const appTitle = 'Lib Store'
 
 export const VIDEO_TYPES = ['.mp4']
 
-export const IMAGE_TYPES = ['.jpg','.jpeg']
+export const IMAGE_TYPES = ['.jpg', '.jpeg']
+
+// 块大小
+export const CHUNKSIZE = 1 * 1024 * 1024
+
+// 并发数
+export const CONCURRENT = 6

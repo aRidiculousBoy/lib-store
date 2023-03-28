@@ -87,11 +87,15 @@ export default {
   data() {
     // 文件分块上传成功的回调
     const successCallback = (response, fileContext) => {
+      // 暂停被处理为undefined 处理这种边界情况
+      if (!response) {
+        return false
+      }
       if (response.allSuccess) {
         fileContext.isFinished = true
         fileContext.isUploading = false
         this.getPageData(this.$route.params.parentId)
-        if (IMAGE_TYPE.includes(fileContext.ext)) {
+        if (IMAGE_TYPES.includes(fileContext.ext)) {
           // 上传缩略图
 
         }

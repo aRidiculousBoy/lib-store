@@ -10,9 +10,9 @@
     </div>
     <a-layout v-else id="components-layout-demo-top-side-2">
       <a-layout-header class="header">
-        <div class="view">
-          <div class="logo" />
-          <span class="app-title">{{ appTitle }}</span>
+        <div class="logo">
+          <img :src="Logo" style="width: 72px;transform:scale(3,3.2) translateY(6px);">
+          <span class="app-name" :title="appTitle">{{ appTitle }}</span>
         </div>
         <a-avatar :src="kenanJpg" :size="44"></a-avatar>
       </a-layout-header>
@@ -28,8 +28,7 @@
               <div class="list">
                 <a-row :gutter="[4, 16]" v-for="row in rowLength" :key="row">
                   <a-col :span="4" v-for="file in useFileList.slice((row - 1) * 6, row * 6)" :key="file.id">
-                    <file v-bind="file" @transfer="handleTransfer" @click="handleFileClick"
-                      @download="handleDownload" />
+                    <file v-bind="file" @transfer="handleTransfer" @click="handleFileClick" @download="handleDownload" />
                   </a-col>
                 </a-row>
               </div>
@@ -66,6 +65,7 @@
 import kenanJpg from '@/assets/images/kenan.jpg'
 import { ERROR_FETCH_TEXT } from '@/constants'
 import { appTitle } from '@/constants'
+import Logo from '@/assets/svg/logo.svg'
 
 import File from './components/file'
 import FileSaver from './components/file-saver'
@@ -77,7 +77,6 @@ export default {
     FileSaver
   },
   created() {
-    console.log(this.$route.params)
   },
   data() {
     return {
@@ -88,7 +87,8 @@ export default {
       fetching: false,
       kenanJpg,
       appTitle,
-      fetchStatus: 0
+      fetchStatus: 0,
+      Logo
     }
   },
   methods: {
@@ -221,11 +221,10 @@ export default {
 }
 
 #components-layout-demo-top-side-2 .logo {
-  width: 120px;
-  height: 31px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 16px 28px 16px 0;
-  float: left;
+  display: flex;
+  align-self: center;
+  width: 100%;
+  height: 100%;
 }
 
 .app-title,
@@ -263,6 +262,13 @@ export default {
 
 .fetch-action * {
   margin: 8px 0;
+}
+
+.app-name {
+  font-size: 24px;
+  color: #fff;
+  text-overflow: ellipsis;
+  margin-left: 12px;
 }
 </style>
 
