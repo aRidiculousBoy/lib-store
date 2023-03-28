@@ -5,7 +5,7 @@
         <a v-if="clickFn" @click="handleClick(prefix)">{{  prefix.name  }}</a>
         <router-link v-else :to="base + prefix.id">{{ prefix.name }}</router-link>
       </a-breadcrumb-item>
-      <a-breadcrumb-item v-for="item in items">
+      <a-breadcrumb-item v-for="item in items" :key="item.name">
         <a v-if="clickFn" @click="handleClick(item)">{{  item.name  }}</a>
         <router-link v-else :to="base + item.id">{{ item.name }}</router-link>
       </a-breadcrumb-item>

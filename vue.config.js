@@ -2,7 +2,22 @@ const { resolve } = require('path')
 
 const outputDir = process.env.VUE_APP_OUTPUT_DIR
 const publicPath = process.env.VUE_APP_PUBLIC_PATH
+const isProduction = process.env.VUE_APP_MODE === 'production'
 
+const cdn = {
+  css: [],
+  js: [
+    'https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js',
+    'https://unpkg.com/ant-design-vue@1.7.8/dist/antd.min.js',
+    'https://unpkg.com/video.js@7.20.3/dist/video.min.js'
+  ]
+}
+const externals = {
+  vue: 'Vue',
+  webConfigs: 'webConfigs',
+  'ant-design-vue': 'antd',
+  'video.js': 'videojs'
+}
 module.exports = {
   runtimeCompiler: true,
   lintOnSave: false,
@@ -44,10 +59,8 @@ module.exports = {
         '@store': resolve('src/store'),
         '@service': resolve('src/service'),
         '@assets': resolve('src/assets')
-      }
-    },
-    externals: {
-      webConfigs: 'webConfigs'
+      },
+
     },
     module: {
       rules: [
@@ -61,6 +74,15 @@ module.exports = {
           }
         }
       ]
+    }
+  },
+  chainWebpack(config) {
+    if (isProduction) {
+      config.plugin('html').tap(args => {
+        args[0].cdn = cdn
+        return args
+      })
+      config.externals(externals)
     }
   },
   // 根据环境变量输出到构建目录

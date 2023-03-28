@@ -2,8 +2,8 @@
   <div class="bin-page">
     <a-spin tip="加载中..." :spinning="loading">
       <div class="main-list" v-if="list.length">
-        <a-row :gutter="[4, 16]" v-for="row in rowLength">
-          <a-col :span="3" v-for="binFile in binFileList.slice((row - 1) * 8, row * 8)">
+        <a-row :gutter="[4, 16]" v-for="row in rowLength" :key="row">
+          <a-col :span="3" v-for="binFile in binFileList.slice((row - 1) * 8, row * 8)" :key="binFile.id">
             <bin-file :key="binFile.id" v-bind="binFile" @delete="handleDelete" @recover="handleRecover"
               @view="handleViewDetails" />
           </a-col>
