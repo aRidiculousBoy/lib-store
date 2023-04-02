@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver'
 const prefix = '/api'
 const videoPrefix = '/v/video'
 
-const FILEAPI = {
+export const FILEAPI = {
   GetFileAPI: prefix + '/user/resource/',
   GetFileProgressAPI: prefix + '/user/resource/file/progress/',
   UploadChunkAPI: prefix + '/user/resource/file/slice/',
@@ -33,7 +33,8 @@ const FILEAPI = {
   GetVideoLocationAPI: prefix + '/user/resource/video/',
   CollectAPI: prefix + '/user/resource/collet/',
   GetCollectListAPI: prefix + '/user/resource/collet',
-  UnCollectAPI: prefix + '/user/resource/collet'
+  UnCollectAPI: prefix + '/user/resource/collet',
+  UploadThumbnailAPI: prefix + '/user/resource/file/thumbnail'
 }
 
 // 获取用户文件列表
@@ -281,6 +282,27 @@ export const unCollectRequest = (payload) => {
   })
 }
 
+
+// 上传缩略图
+export const uploadThumbnailRequest = (payload) => {
+  return request.post({
+    url: FILEAPI.UploadThumbnailAPI,
+    data: {
+      id: payload.id,
+      thumbnail: payload.thumbnail
+    }
+  })
+}
+
+export const getBlob = (payload) => {
+  return request.get({
+    url: FILEAPI.DownloadFileAPI + `${payload.type === 'folder' ? 0 : 1}/${payload.id}`,
+    responseType: 'blob'
+  })
+}
+
+
+
 export default {
   getUserFilesRequest,
   getFileProgressRequest,
@@ -310,5 +332,7 @@ export default {
   getVideoLocationRequest,
   collectRequest,
   getCollectListRequest,
-  unCollectRequest
+  unCollectRequest,
+  uploadThumbnailRequest,
+  getBlob,
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="file" :title="name" :style="fileStyle" draggable="true" @contextmenu.prevent="handleContextMenu"
     @click="handleClick">
-    <img :src="typeMapper[extension] || typeMapper.fallback" class="file-cover">
+    <img :src="snapshot || typeMapper[extension] || typeMapper.fallback" class="file-cover">
     <div class="name">{{ name }}</div>
   </div>
 </template>
@@ -49,6 +49,9 @@ export default {
     collect: {
       type: Boolean,
       required: true
+    },
+    thumbnail: {
+      type: String
     }
   },
   inject: ['typeMapper'],
@@ -206,6 +209,11 @@ export default {
         type: this.type
       }
       this.$emit('unFavor', payload)
+    }
+  },
+  computed: {
+    snapshot() {
+      return this.thumbnail ? 'data:image/jpeg;base64,' + this.thumbnail : undefined
     }
   }
 }

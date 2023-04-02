@@ -8,7 +8,7 @@
         <div class="taskList">
           <div class="file-progress-viewer" v-for="(task, index) in runningTasks" :key="task.key">
             <div class="file-cover">
-              <img :src="typeMapper[task.ext] || typeMapper.fallback">
+              <img :src="task.thumbnail || typeMapper[task.ext] || typeMapper.fallback" >
             </div>
             <div class="bar">
               <div class="text" :title="task.filename">{{ task.filename }}</div>
@@ -234,6 +234,8 @@ export default {
 
     img {
       width: 100%;
+      height: 76px;
+      outline: thick double #999;
     }
   }
 

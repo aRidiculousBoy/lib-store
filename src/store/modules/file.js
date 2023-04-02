@@ -119,6 +119,14 @@ const file = {
     async unCollect(context, payload) {
       const response = await fileService.unCollectRequest(payload)
       return response
+    },
+    async uploadThumbnail(context, payload) {
+      const response = await fileService.uploadThumbnailRequest(payload)
+      return response
+    },
+    async getBlob(context, payload) {
+      const response = await fileService.getBlob(payload)
+      return response
     }
   }
 }

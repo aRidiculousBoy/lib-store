@@ -21,6 +21,7 @@
     "lodash": "^4.17.21",
     "mux.js": "^6.2.0",
     "p-limit": "^3.1.0",
+    "v-viewer": "^1.6.4",
     "video.js": "^7.21.2",
     "vue": "^2.6.11",
     "vue-contextmenujs": "^1.4.9",

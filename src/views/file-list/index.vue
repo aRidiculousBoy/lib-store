@@ -52,6 +52,7 @@
     <file-co-sharer ref="fileCoSharerRef" />
     <pdf-viewer ref="pdfViewerRef" />
     <video-player ref="videoPlayerRef" />
+    <image-viewer ref="imageViewerRef"  />
   </div>
 </template>
 
@@ -68,15 +69,18 @@ import FileMover from './components/file-mover'
 import FileCoSharer from './components/file-co-sharer'
 import PdfViewer from './components/pdf-viewer'
 import VideoPlayer from './components/video-player'
+import ImageViewer from './components/image-viewer'
+
 
 import { Modal } from 'ant-design-vue'
-import { createChunks, calculateHash, getExt } from './utils'
+import { createChunks, calculateHash, getExt, compressImageToBase64, video2Base64 } from './utils'
 import { uuid } from '@/utils/utils'
 import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
 import { VIDEO_TYPES, IMAGE_TYPES } from '@/constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
 import axios from 'axios'
+import { FILEAPI } from '@/service/modules/file.js'
 
 
 
@@ -94,11 +98,27 @@ export default {
       if (response.allSuccess) {
         fileContext.isFinished = true
         fileContext.isUploading = false
-        this.getPageData(this.$route.params.parentId)
-        if (IMAGE_TYPES.includes(fileContext.ext)) {
-          // 上传缩略图
 
+        // 上传缩略图
+        if (IMAGE_TYPES.includes(fileContext.ext)) {
+          const payload = {
+            id: response.resource.id,
+            thumbnail: fileContext.thumbnail
+          }
+
+          this.$store.dispatch('file/uploadThumbnail', payload).then(response => {
+          })
         }
+        else if (VIDEO_TYPES.includes(fileContext.ext)) {
+          const payload = {
+            id: response.resource.id,
+            thumbnail: fileContext.thumbnail
+          }
+          this.$store.dispatch('file/uploadThumbnail', payload).then(response => {
+            console.log(response)
+          })
+        }
+        this.getPageData(this.$route.params.parentId)
       }
       fileContext.successChunks.push(response.chunkNum)
       fileContext.percentage = Math.ceil((fileContext.successChunks.length / fileContext.chunkList.length) * 100)
@@ -131,7 +151,8 @@ export default {
     FileMover,
     FileCoSharer,
     PdfViewer,
-    VideoPlayer
+    VideoPlayer,
+    ImageViewer
   },
   methods: {
     async getPageData(parentId) {
@@ -215,11 +236,14 @@ export default {
         isFinished: false,
         cancel: undefined,
         ext: getExt(file.name),
-        key: uuid()
+        key: uuid(),
+        thumbnail: undefined
       }
       // 创建分片列表
       fileContext.chunkList = createChunks(file)
       fileContext.hash = await calculateHash(fileContext.chunkList)
+      fileContext.thumbnail = await this.handleSnapshot({ file, type: fileContext.ext })
+
       this.uploadingList.unshift(fileContext)
       // 云端已经存储?
       let uploadedList = await this.$store.dispatch('file/getFileProgress', {
@@ -371,6 +395,12 @@ export default {
           this.$refs.videoPlayerRef?.open(response, payload.name)
         })
       }
+      else if (IMAGE_TYPES.includes(extension)) {
+        const { id, type } = payload
+        console.log(FILEAPI)
+        const url = FILEAPI.DownloadFileAPI + `${type === 'folder' ? 0 : 1}/${id}`
+        this.$refs.imageViewerRef?.show([url])
+      }
       else {
         console.log('预览逻辑')
       }
@@ -483,6 +513,17 @@ export default {
     handleUnFavor(payload) {
       this.$store.dispatch('file/unCollect', payload).then(() => { this.getPageData() })
     },
+    async handleSnapshot(payload) {
+      const { type, file } = payload
+      let base64
+      if (IMAGE_TYPES.includes(type)) {
+        base64 = await compressImageToBase64(file, 0.9)
+      }
+      else if (VIDEO_TYPES.includes(type)) {
+        base64 = await video2Base64(file)
+      }
+      return base64
+    }
   },
   computed: {
     size() {

@@ -113,7 +113,7 @@ export default {
       const payload = {
         parentId
       }
-      // 特殊情况处理 根文件夹 需要触发面包屑导航的更新
+      // 处理 根文件夹 需要触发面包屑导航的更新
       if (parentId == '0') {
         this.routeStack = []
       }
