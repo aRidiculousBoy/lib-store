@@ -213,7 +213,7 @@ export default {
   },
   computed: {
     snapshot() {
-      return this.thumbnail ? 'data:image/jpeg;base64,' + this.thumbnail : undefined
+      return this.thumbnail ? this.thumbnail : undefined
     }
   }
 }

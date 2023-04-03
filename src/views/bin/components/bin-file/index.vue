@@ -1,6 +1,6 @@
 <template>
   <div class="bin-file" :title="name" :style="fileStyle" draggable="true" @contextmenu.prevent="handleContextMenu">
-    <img :src="typeMapper[extension] || typeMapper.fallback" class="file-cover">
+    <img :src="thumbnail || typeMapper[extension] || typeMapper.fallback" class="file-cover">
     <div class="name">{{ name }}</div>
   </div>
 </template>
@@ -33,6 +33,9 @@ export default {
       required: true
     },
     extension: {
+      type: String
+    },
+    thumbnail: {
       type: String
     }
   },
@@ -145,7 +148,7 @@ export default {
 }
 </style>
 <style>
-.custom-class .menu_item:nth-child(2) {
+.custom-class .menu_item:nth-child(3) {
   color: red;
 }
 </style>

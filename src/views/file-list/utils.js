@@ -33,7 +33,7 @@ export const getExt = (filename) => {
 }
 
 
-export const compressImageToBase64 = (file, quality, width = 240, height = 360) => {
+export const compressImageToBase64 = (file, quality, width = 450, height = 600) => {
   return new Promise((resolve, reject) => {
     // 创建一个空的图片对象
     const img = new Image();
@@ -93,8 +93,8 @@ export const loadVideo = (video) => {
   return new Promise(function (resolve, reject) {
     const videoElem = document.createElement('video')
     const dataUrl = URL.createObjectURL(video)
-    videoElem.width = 200
-    videoElem.height = 200
+    videoElem.width = 450
+    videoElem.height = 600
     videoElem.currentTime = 3
     // 当前帧的数据是可用的
     videoElem.onloadeddata = function () {

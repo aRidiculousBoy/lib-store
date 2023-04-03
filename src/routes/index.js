@@ -140,27 +140,6 @@ export const constantRouterMap = [
     ]
   },
   {
-    name: 'Album',
-    path: '/album',
-    component: Layout,
-    redirect: '/album',
-    meta: {
-      title: '相册',
-      hasSubMenu: false,
-      addBreadcrumb: true,
-      icon: 'picture'
-    },
-    children: [
-      {
-        path: '/album',
-        component: Album,
-        meta: {
-          module: '相册'
-        }
-      }
-    ]
-  },
-  {
     name: 'Favor',
     path: '/favor',
     component: Layout,

@@ -52,7 +52,7 @@
     <file-co-sharer ref="fileCoSharerRef" />
     <pdf-viewer ref="pdfViewerRef" />
     <video-player ref="videoPlayerRef" />
-    <image-viewer ref="imageViewerRef"  />
+    <image-viewer ref="imageViewerRef" />
   </div>
 </template>
 
@@ -107,6 +107,7 @@ export default {
           }
 
           this.$store.dispatch('file/uploadThumbnail', payload).then(response => {
+            this.getPageData(this.$route.params.parentId)
           })
         }
         else if (VIDEO_TYPES.includes(fileContext.ext)) {
@@ -115,10 +116,12 @@ export default {
             thumbnail: fileContext.thumbnail
           }
           this.$store.dispatch('file/uploadThumbnail', payload).then(response => {
-            console.log(response)
+            this.getPageData(this.$route.params.parentId)
           })
         }
-        this.getPageData(this.$route.params.parentId)
+        else {
+          this.getPageData(this.$route.params.parentId)
+        }
       }
       fileContext.successChunks.push(response.chunkNum)
       fileContext.percentage = Math.ceil((fileContext.successChunks.length / fileContext.chunkList.length) * 100)

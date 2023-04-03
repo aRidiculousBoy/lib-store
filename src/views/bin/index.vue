@@ -79,6 +79,7 @@ export default {
         file.type = binFile.typeId === 0 ? 'folder' : 'file'
         file.deleteTime = binFile.deleteTime
         file.parentId = binFile.parentId
+        file.thumbnail = binFile.thumbnail
         return file
       })
     }
