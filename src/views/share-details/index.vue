@@ -55,8 +55,8 @@
             </a-result>
           </a-card>
         </a-spin>
-        <file-saver ref="fileSaverRef" />
       </a-layout-content>
+      <file-saver ref="fileSaverRef" v-if="isLogin" />
     </a-layout>
   </div>
 </template>
@@ -80,6 +80,7 @@ export default {
     this.init()
   },
   data() {
+    const isLogin = !!(this.$store.state.user.token)
     return {
       list: [],
       loading: false,
@@ -89,7 +90,8 @@ export default {
       fetchCode: undefined,
       kenanJpg,
       appTitle,
-      Logo
+      Logo,
+      isLogin
     }
   },
   methods: {
