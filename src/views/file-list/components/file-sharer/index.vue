@@ -14,7 +14,7 @@
               <a-radio :value="1 | dayFilter">
                 1天
               </a-radio>
-              <a-radio :value="2 | dayFilter">
+              <a-radio :value="7 | dayFilter">
                 7天
               </a-radio>
               <a-radio :value="30 | dayFilter">

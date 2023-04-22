@@ -76,7 +76,7 @@ import { Modal } from 'ant-design-vue'
 import { createChunks, calculateHash, getExt, compressImageToBase64, video2Base64 } from './utils'
 import { uuid } from '@/utils/utils'
 import { CHUNKSIZE as Size, CONCURRENT as concurrent } from './constants'
-import { VIDEO_TYPES, IMAGE_TYPES } from '@/constants'
+import { VIDEO_TYPES, IMAGE_TYPES, DOC_TYPES } from '@/constants'
 import { Empty } from 'ant-design-vue';
 import pLimit from 'p-limit'
 import axios from 'axios'
@@ -403,6 +403,8 @@ export default {
         console.log(FILEAPI)
         const url = FILEAPI.DownloadFileAPI + `${type === 'folder' ? 0 : 1}/${id}`
         this.$refs.imageViewerRef?.show([url])
+      }
+      else if (DOC_TYPES.includes(extension)) {
       }
       else {
         console.log('预览逻辑')

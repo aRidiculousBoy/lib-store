@@ -140,7 +140,6 @@ class Request {
 }
 
 const request = new Request({
-  timeout: networkTimeout,
   interceptors: {
     requestInterceptor: (config) => {
       const token = authorization.getToken()

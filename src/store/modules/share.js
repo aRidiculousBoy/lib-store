@@ -24,6 +24,10 @@ const shareStore = {
     async getDeepResource(context, payload) {
       const response = await shareService.getDeepResourceRequest(payload)
       return response
+    },
+    async validateShare(context,payload) {
+      const response = await shareService.validateShareRequest(payload)
+      return response
     }
   }
 }

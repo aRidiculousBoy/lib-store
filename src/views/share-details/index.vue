@@ -17,8 +17,8 @@
         <a-avatar :src="kenanJpg" :size="44"></a-avatar>
       </a-layout-header>
       <a-layout-content style="padding: 0 50px">
-        <a-spin :spinning="loading">
-          <div v-if="!error" class="content" style="display: flex;height: 96%">
+        <a-spin :spinning="loading" tip="加载中...">
+          <div v-if="!isExpired" class="content" style="display: flex;height: 96%">
             <a-card style="flex: 5">
               <div class="page-header">
                 <span>面包屑</span>
@@ -43,7 +43,7 @@
             </a-card>
           </div>
           <a-card v-else>
-            <a-result title="您打开的链接有误，请检查链接准确性！">
+            <a-result title="资源已过期">
               <template #icon>
                 <a-icon type="warning" theme="twoTone" />
               </template>
@@ -77,17 +77,18 @@ export default {
     FileSaver
   },
   created() {
+    this.init()
   },
   data() {
     return {
       list: [],
       loading: false,
-      error: false,
-      fetchCode: undefined,
+      fetchStatus: 0,
+      isExpired: false,
       fetching: false,
+      fetchCode: undefined,
       kenanJpg,
       appTitle,
-      fetchStatus: 0,
       Logo
     }
   },
@@ -99,8 +100,11 @@ export default {
         const payload = {
           id
         }
+        this.loading = true
         this.$store.dispatch('share/getDeepResource', payload).then(response => {
           this.list = this.clickParser(response)
+        }).finally(() => {
+          this.loading = false
         })
       }
       else {
@@ -111,19 +115,30 @@ export default {
       const isValid = this.fetchCode && this.fetchCode !== '' && this.fetchCode?.trim() !== ''
       if (isValid) {
         this.fetching = true
-        const shareName = this.$route.params.shareName
-        const payload = {
-          name: shareName,
-          type: 1,
-          fetchCode: this.fetchCode
-        }
-        this.$store.dispatch('share/getShareResource', payload).then(response => {
-          if (response === ERROR_FETCH_TEXT) {
+        Promise.all([this.handleGetShare(), this.handleValidateShare()]).then(response => {
+          const share = response[0]
+          const isExpired = response[1]
+          // 先判断提取码是否正确
+          if (share === ERROR_FETCH_TEXT) {
             this.$message.error('提取码错误')
+            // 清除验证码
+            this.fetchCode = undefined
           }
           else {
-            this.fetchStatus = 1
-            this.list = [response]
+            // 提取码正确 判断资源是否过期
+            if (isExpired) {
+              this.isExpired = true
+              this.fetchStatus = 1
+            }
+            else {
+              //  提取码正确 资源未过期 
+              this.fetchStatus = 1
+              this.list = [response[0]]
+
+              // 存储校验码 刷新时使用
+              const shareName = this.$route.params.shareName
+              sessionStorage.setItem(shareName, this.fetchCode)
+            }
           }
         }).finally(() => {
           this.fetching = false
@@ -132,6 +147,22 @@ export default {
       else {
         this.$message.error('验证码不能为空')
       }
+    },
+    handleValidateShare() {
+      const shareName = this.$route.params.shareName
+      const payload = {
+        shareName: shareName,
+      }
+      return this.$store.dispatch('share/validateShare', payload)
+    },
+    handleGetShare() {
+      const shareName = this.$route.params.shareName
+      const payload = {
+        name: shareName,
+        type: 1,
+        fetchCode: this.fetchCode
+      }
+      return this.$store.dispatch('share/getShareResource', payload)
     },
     handleTransfer(file) {
       this.$refs.fileSaverRef?.open(file)
@@ -167,6 +198,15 @@ export default {
     },
     handlePreview() {
       console.log('预览逻辑实现')
+    },
+    // 用户刷新 如果之前有访问记录 则跳过校验步骤
+    init() {
+      const shareName = this.$route.params.shareName
+      const fetchCode = sessionStorage.getItem(shareName)
+      if (fetchCode) {
+        this.fetchCode = fetchCode
+        this.handleFetch()
+      }
     }
   },
   computed: {

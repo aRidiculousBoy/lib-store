@@ -7,6 +7,7 @@ export const VIDEO_TYPES = ['.mp4']
 
 export const IMAGE_TYPES = ['.jpg', '.jpeg','.png']
 
+export const DOC_TYPES = ['.doc','.docx']
 // 块大小
 export const CHUNKSIZE = 1 * 1024 * 1024
 

@@ -1,8 +1,8 @@
 <template>
   <div class="file-saver">
     <a-modal v-model="visible" title="保存到">
-      <file-breadcrumb :items="routeStack" separator=">" :prefix="{ id: 0, name: '文件' }"
-        :clickFn="handleBreadcrumbClick" class="breadcrumb" />
+      <file-breadcrumb :items="routeStack" separator=">" :prefix="{ id: 0, name: '文件' }" :clickFn="handleBreadcrumbClick"
+        class="breadcrumb" />
       <a-spin :spinning="loading" tip="加载中">
         <div class="create-folder" v-show="showCreateFolder">
           <a-input class="create-folder-input" v-model="folderName" ref="createFolderRef"></a-input>
@@ -24,7 +24,7 @@
         </div>
         <div v-if="fileList.length" class="file-list">
           <div :class="[file.type === 'folder' ? 'save-item' : 'disable']" v-for="file in fileList" :key="file.id"
-            @click="handleFileClick(file)" :title="file.name">
+            @click="handleFileClick(file)">
             <img :src="typeMapper[file.extension] || typeMapper.fallback" class="file-cover">
             <div class="file-name">{{ file.name }}</div>
           </div>
@@ -38,7 +38,7 @@
             取消
           </a-button>
           <a-button type="primary" :loading="submitting" @click="handleTransfer">
-            {{ isRoot? '保存到根目录': '保存到此处' }}
+            {{ isRoot ? '保存到根目录' : '保存到此处' }}
           </a-button>
         </a-space>
       </template>
@@ -160,6 +160,7 @@ export default {
     handleFileClick(file) {
       const { type, id } = file
       if (type === 'folder') {
+        console.log(11)
         this.parentName = file.name
         this.getData(id)
       }
