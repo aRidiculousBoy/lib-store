@@ -97,7 +97,13 @@ export default {
           {
             dataIndex: 'createTime',
             key: 'createTime',
-            title: '创建日期',
+            title: '创建时间',
+            scopedSlots: { customRender: 'createTime' }
+          },
+          {
+            dataIndex: 'expires',
+            key: 'expires',
+            title: '过期时间',
             scopedSlots: { customRender: 'createTime' }
           },
           {
@@ -154,7 +160,11 @@ export default {
     getShareResource() {
       this.list.loading = true
       this.$store.dispatch('share/getShareResource', this.searcher).then((response) => {
-        this.list.data = response
+        const list = response.map(item => {
+          item.expires = dayjs(item.createTime).add(1,'day').format('YYYY-MM-DD HH:mm:ss')
+          return item
+        })
+        this.list.data = list
       }).catch(() => {
 
       }).finally(() => {

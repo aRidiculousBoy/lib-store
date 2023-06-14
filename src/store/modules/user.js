@@ -21,7 +21,7 @@ const user = {
       localStorage.setItem('token', token)
     },
     setAvatar(state, avatar) {
-      state.avatar = 'data:image/*;base64,' + avatar
+      state.avatar = avatar ? 'data:image/*;base64,' + avatar : undefined
     },
     setIntro(state, intro) {
       state.intro = intro

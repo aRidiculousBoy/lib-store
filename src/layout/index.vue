@@ -3,26 +3,27 @@
     <a-layout id="components-layout-demo-custom-trigger">
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible :width="240">
         <div class="logo">
-          <img :src="Logo" style="width: 72px;transform:scale(2,2.2) translateY(6px);">
+          <img :src="Logo" style="width: 72px; transform: scale(2, 2.2) translateY(6px)" />
           <span class="app-name" :title="appTitle">{{ appTitle }}</span>
         </div>
-        
+
         <sidebar :collapsed="collapsed" />
       </a-layout-sider>
       <a-layout class="layout-content">
         <a-layout-header style="background: #fff; padding: 0">
-          <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="() => (collapsed = !collapsed)" />
+          <a-icon
+            class="trigger"
+            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+            @click="() => (collapsed = !collapsed)"
+          />
           <breadcrumbs />
           <div class="header-right">
             <div class="content">
               <span class="username">{{ username }}</span>
               <a-dropdown placement="bottomCenter">
-                <a-avatar :src="avatar" :size="40" style="cursor:pointer" />
+                <a-avatar :src="avatar" :size="40" style="cursor: pointer" />
                 <a-menu slot="overlay" @click="handleUserMenuClick">
-                  <a-menu-item key="help">
-                    帮助中心
-                  </a-menu-item>
+                  <a-menu-item key="help"> 帮助中心 </a-menu-item>
                   <a-menu-item key="user-setting">
                     <a>个人设置</a>
                   </a-menu-item>
@@ -34,13 +35,15 @@
             </div>
           </div>
         </a-layout-header>
-        <a-layout-content :style="{
-          margin: '24px 16px',
-          padding: '24px',
-          minHeight: '280px',
-          backgroundColor: '#fff',
-          borderTop: '1px solid #e9e9e9'
-        }">
+        <a-layout-content
+          :style="{
+            margin: '24px 16px',
+            padding: '24px',
+            minHeight: '280px',
+            backgroundColor: '#fff',
+            borderTop: '1px solid #e9e9e9'
+          }"
+        >
           <router-view></router-view>
         </a-layout-content>
       </a-layout>
@@ -52,7 +55,7 @@
 import Sidebar from './sidebar.vue'
 import Breadcrumbs from './breadcrumbs.vue'
 import { mapState } from 'vuex'
-import { appTitle } from '@/constants'
+import { appTitle, DEFAULT_AVATAR } from '@/constants'
 import Logo from '@/assets/svg/logo.svg'
 
 const clickMap = {
@@ -70,7 +73,7 @@ export default {
   provide() {
     return {
       navigateToHome: this.navigateToHome,
-      collapsed: () => this.collapsed,
+      collapsed: () => this.collapsed
     }
   },
   data() {
@@ -96,12 +99,12 @@ export default {
     handleSetting() {
       this.$router.push('/user-center')
     },
-    handleHelp() { }
+    handleHelp() {}
   },
   computed: {
     ...mapState({
       username: (state) => state.user.username,
-      avatar: (state) => state.user.avatar
+      avatar: (state) => state.user.avatar || DEFAULT_AVATAR
     })
   }
 }
@@ -160,7 +163,6 @@ export default {
 
   align-items: center;
 }
-
 
 /deep/.ant-layout-content {
   padding: 0 !important;

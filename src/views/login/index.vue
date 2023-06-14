@@ -94,7 +94,7 @@
           <h3 style="color:#fff">欢迎加入 Lib-Store</h3>
           <p>
           </p>
-          <button class="btn transparent" id="sign-in-btn">登录</button>
+          <button class="btn transparent" id="sign-in-btn" ref="toggleLoginRef">登录</button>
         </div>
       </div>
     </div>
@@ -182,6 +182,8 @@ export default {
             message: '注册成功',
             description: '欢迎成为Lib Store的一员'
           })
+          // 注册成功后手动触发切换到登录表单
+          this.$refs.toggleLoginRef?.click()
         })
       }
       else {

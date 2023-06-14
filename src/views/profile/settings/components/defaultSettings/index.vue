@@ -3,12 +3,27 @@
     <h3 class="title">基本设置</h3>
     <div class="content">
       <div class="form-content">
-        <a-form-model :model="formData" layout="vertical" :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }">
-          <a-form-model-item v-for="formItem in formItems" :label="formItem.label" :key="formItem.bindingProp"
-            :wrapper-col="formItem.wrapperCol">
-            <a-input v-if="formItem.type === 'input'" v-model="formData[formItem.bindingProp]" />
-            <a-textarea v-else-if="formItem.type === 'textarea'" v-model="formData[formItem.bindingProp]"
-              :key="formItem.bindingProp" />
+        <a-form-model
+          :model="formData"
+          layout="vertical"
+          :label-col="{ span: 0 }"
+          :wrapper-col="{ span: 24 }"
+        >
+          <a-form-model-item
+            v-for="formItem in formItems"
+            :label="formItem.label"
+            :key="formItem.bindingProp"
+            :wrapper-col="formItem.wrapperCol"
+          >
+            <a-input
+              v-if="formItem.type === 'input'"
+              v-model="formData[formItem.bindingProp]"
+            />
+            <a-textarea
+              v-else-if="formItem.type === 'textarea'"
+              v-model="formData[formItem.bindingProp]"
+              :key="formItem.bindingProp"
+            />
           </a-form-model-item>
           <a-form-model-item :wrapper-col="{ span: 14 }">
             <a-button type="primary">保存</a-button>
@@ -31,6 +46,7 @@
 import kenan from '@assets/images/kenan.jpg'
 import AvatarEditor from './components/avatar-editor'
 import { mapActions, mapState } from 'vuex'
+import { DEFAULT_AVATAR } from '@/constants'
 
 export default {
   name: 'DefaultSetting',
@@ -96,12 +112,12 @@ export default {
     },
     ...mapActions({
       getUserInfo: 'user/getUserInfo'
-    }),
+    })
   },
   computed: {
     ...mapState({
-      username: state => state.user.username,
-      userAvatar: state => state.user.avatar
+      username: (state) => state.user.username,
+      userAvatar: (state) => state.user.avatar || DEFAULT_AVATAR
     })
   }
 }

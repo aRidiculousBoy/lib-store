@@ -11,14 +11,14 @@
     <a-layout v-else id="components-layout-demo-top-side-2">
       <a-layout-header class="header">
         <div class="logo">
-          <img :src="Logo" style="width: 72px;transform:scale(3,3.2) translateY(6px);">
+          <img :src="Logo" style="width: 72px; transform: scale(3, 3.2) translateY(6px)" />
           <span class="app-name" :title="appTitle">{{ appTitle }}</span>
         </div>
         <a-avatar :src="kenanJpg" :size="44"></a-avatar>
       </a-layout-header>
       <a-layout-content style="padding: 0 50px">
         <a-spin :spinning="loading" tip="加载中...">
-          <div v-if="!isExpired" class="content" style="display: flex;height: 96%">
+          <div v-if="!isExpired" class="content" style="display: flex; height: 96%">
             <a-card style="flex: 5">
               <div class="page-header">
                 <span>面包屑</span>
@@ -80,7 +80,7 @@ export default {
     this.init()
   },
   data() {
-    const isLogin = !!(this.$store.state.user.token)
+    const isLogin = !!this.$store.state.user.token
     return {
       list: [],
       loading: false,
@@ -103,11 +103,14 @@ export default {
           id
         }
         this.loading = true
-        this.$store.dispatch('share/getDeepResource', payload).then(response => {
-          this.list = this.clickParser(response)
-        }).finally(() => {
-          this.loading = false
-        })
+        this.$store
+          .dispatch('share/getDeepResource', payload)
+          .then((response) => {
+            this.list = this.clickParser(response)
+          })
+          .finally(() => {
+            this.loading = false
+          })
       }
       else {
         this.handleFetch()
@@ -117,34 +120,36 @@ export default {
       const isValid = this.fetchCode && this.fetchCode !== '' && this.fetchCode?.trim() !== ''
       if (isValid) {
         this.fetching = true
-        Promise.all([this.handleGetShare(), this.handleValidateShare()]).then(response => {
-          const share = response[0]
-          const isExpired = response[1]
-          // 先判断提取码是否正确
-          if (share === ERROR_FETCH_TEXT) {
-            this.$message.error('提取码错误')
-            // 清除验证码
-            this.fetchCode = undefined
-          }
-          else {
-            // 提取码正确 判断资源是否过期
-            if (isExpired) {
-              this.isExpired = true
-              this.fetchStatus = 1
+        Promise.all([this.handleGetShare(), this.handleValidateShare()])
+          .then((response) => {
+            const share = response[0]
+            const isExpired = response[1]
+            // 先判断提取码是否正确
+            if (share === ERROR_FETCH_TEXT) {
+              this.$message.error('提取码错误')
+              // 清除验证码
+              this.fetchCode = undefined
             }
             else {
-              //  提取码正确 资源未过期 
-              this.fetchStatus = 1
-              this.list = [response[0]]
+              // 提取码正确 判断资源是否过期
+              if (isExpired) {
+                this.isExpired = true
+                this.fetchStatus = 1
+              }
+              else {
+                //  提取码正确 资源未过期
+                this.fetchStatus = 1
+                this.list = [response[0]]
 
-              // 存储校验码 刷新时使用
-              const shareName = this.$route.params.shareName
-              sessionStorage.setItem(shareName, this.fetchCode)
+                // 存储校验码 刷新时使用
+                const shareName = this.$route.params.shareName
+                sessionStorage.setItem(shareName, this.fetchCode)
+              }
             }
-          }
-        }).finally(() => {
-          this.fetching = false
-        })
+          })
+          .finally(() => {
+            this.fetching = false
+          })
       }
       else {
         this.$message.error('验证码不能为空')
@@ -153,7 +158,7 @@ export default {
     handleValidateShare() {
       const shareName = this.$route.params.shareName
       const payload = {
-        shareName: shareName,
+        shareName: shareName
       }
       return this.$store.dispatch('share/validateShare', payload)
     },
@@ -167,9 +172,18 @@ export default {
       return this.$store.dispatch('share/getShareResource', payload)
     },
     handleTransfer(file) {
-      this.$refs.fileSaverRef?.open(file)
+      const { isLogin } = this
+      if (isLogin) {
+        this.$refs.fileSaverRef?.open(file)
+      }
+      else {
+        const op = '转存'
+        this.isNotLoginCallback(op)
+      }
     },
     handleFileClick(payload) {
+      const { isLogin } = this
+      
       const { type, id } = payload
       if (type === 'folder') {
         const shareName = this.$route.params.shareName
@@ -178,16 +192,30 @@ export default {
           path: route,
           query: Date.now()
         })
-      } else {
-        this.handlePreview(payload)
+      }
+      else {
+        if (isLogin) {
+          this.handlePreview(payload)
+        }
+        else {
+          const op = '预览'
+          this.isNotLoginCallback(op)
+        }
       }
     },
     handleDownload(file) {
-      this.$store.dispatch('file/downloadShare', file)
+      // 登录状态下允许下载
+      if (this.isLogin) {
+        this.$store.dispatch('file/downloadShare', file)
+      }
+      else {
+          const op = '下载'
+          this.isNotLoginCallback(op)
+      }
     },
     clickParser(data) {
       let list = [...data.folders, ...data.resources]
-      list = list.map(file => {
+      list = list.map((file) => {
         return {
           id: file.id || file.folderId,
           shareName: file.folderName || file.fileName,
@@ -209,11 +237,20 @@ export default {
         this.fetchCode = fetchCode
         this.handleFetch()
       }
+    },
+    // 对非登录状态的操作进行统一管理 最终都会执行弹窗登录处理
+    isNotLoginCallback(op) {
+      const notification = {
+        description: `请先登录后再${op}`,
+        message: '提醒'
+      }
+      this.$notification.warning(notification)
+      console.log('登录弹窗 ==========')
     }
   },
   computed: {
     useFileList() {
-      return this.list.map(file => {
+      return this.list.map((file) => {
         return {
           originalName: file.originalName,
           shareName: file.shareName,
@@ -225,7 +262,7 @@ export default {
     },
     rowLength() {
       return Math.ceil(this.list.length / 6)
-    },
+    }
   },
   watch: {
     '$route.params': {
@@ -275,7 +312,6 @@ export default {
   color: #fff;
 }
 
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -313,4 +349,3 @@ export default {
   margin-left: 12px;
 }
 </style>
-
